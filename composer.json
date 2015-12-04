@@ -1,0 +1,11 @@
+{
+  "name": "melervand/indie",
+  "description": "Independent Validator",
+  "require": {
+    "php": ">=5.4",
+    "phpunit/phpunit": "4.8.*"
+  },
+  "autoload": {
+    "psr-4": { "": "src/" }
+  }
+}
