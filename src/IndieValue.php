@@ -33,6 +33,28 @@ class IndieValue {
     }
 
     /**
+     * @param integer $min
+     * @param string $message
+     * @return IndieValue
+     */
+    public function min( $min, $message ) {
+        return $this->pass(function($value) use ($min) {
+            return $value >= $min;
+        }, $message);
+    }
+
+    /**
+     * @param integer $max
+     * @param string $message
+     * @return IndieValue
+     */
+    public function max( $max, $message ) {
+        return $this->pass(function($value) use ($max) {
+            return $value <= $max;
+        }, $message);
+    }
+
+    /**
      * @param $message
      * @return IndieValue
      */

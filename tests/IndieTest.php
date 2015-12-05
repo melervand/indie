@@ -13,9 +13,9 @@ class IndieTest extends PHPUnit_Framework_TestCase {
                 'second_n' => 'Hello World!'
             ]
         ],
-        10 => [
-            0 => '',
-            1 => 'Hello World!'
+        'minmax' => [
+            'min' => 10,
+            'max' => 10
         ]
     ];
 
@@ -38,32 +38,16 @@ class IndieTest extends PHPUnit_Framework_TestCase {
         $this->assertFalse( $validator->isValid() );
     }
 
-    public function testRequiredField() {
+    public function testMultidimensionalValidation() {
         $validator = new Indie();
         $validator->validate($this->POST);
 
-        $validator->key('required_e')->required('Field is required');
-        $validator->key('required_n')->required('Field is required');
-        $validator->key('first[first_e]')->required('Field is required');
-        $validator->key('first[first_n]')->required('Field is required');
         $validator->key('first[second][second_e]')->required('Field is required');
         $validator->key('first[second][second_n]')->required('Field is required');
 
-        $validator->key('10[0]')->required('Field is required');
-        $validator->key('10[1]')->required('Field is required');
-
-        $this->assertFalse( $validator->key('required_e')->isValid() );
-        $this->assertTrue( $validator->key('required_n')->isValid() );
-
-        $this->assertFalse( $validator->isValid( 'first[first_e]' ) );
-        $this->assertTrue( $validator->isValid( 'first[first_n]' ) );
         $this->assertFalse( $validator->isValid( 'first[second][second_e]' ) );
         $this->assertTrue( $validator->isValid( 'first[second][second_n]' ) );
-
-        $this->assertFalse( $validator->isValid( '10[0]' ) );
-        $this->assertTrue( $validator->isValid( '10[1]' ) );
     }
-
 
     public function testValuesGetter() {
         $validator = new Indie();
@@ -85,5 +69,29 @@ class IndieTest extends PHPUnit_Framework_TestCase {
 
         $this->assertTrue($validator->isValid('first[second]'));
         $this->assertFalse($validator->isValid('required_n'));
+    }
+
+    public function testRequiredField() {
+        $validator = new Indie();
+        $validator->validate($this->POST);
+
+        $validator->key('required_e')->required('Field is required');
+        $validator->key('required_n')->required('Field is required');
+
+        $this->assertFalse( $validator->key('required_e')->isValid() );
+        $this->assertTrue( $validator->key('required_n')->isValid() );
+    }
+
+    public function testMinMaxValidator() {
+        $validator = new Indie();
+        $validator->validate($this->POST);
+
+        $validator->key('minmax[min]')->min( 9, "Min9" );
+        $validator->key('minmax[min]')->min( 11, "Min11" );
+
+        $validator->key('minmax[max]')->max( 9, "Max9" );
+        $validator->key('minmax[max]')->max( 11, "Max11" );
+
+        $this->assertEquals( 2 , count( $validator->getErrors() ) );
     }
 }
