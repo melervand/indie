@@ -72,12 +72,20 @@ class IndieValue {
         }, $message );
     }
 
+    /**
+     * @param string $message
+     * @return IndieValue
+     */
     public function numeric( $message ) {
         return $this->pass( function($value) {
             return is_numeric( $value );
         }, $message );
     }
 
+    /**
+     * @param string $message
+     * @return IndieValue
+     */
     public function url( $message ) {
         return $this->pass( function($value) {
             return filter_var( $value, FILTER_VALIDATE_URL );
@@ -94,14 +102,23 @@ class IndieValue {
         }, $message );
     }
 
+    /**
+     * @return bool
+     */
     public function isValid() {
         return count( $this->errors ) ? false : true;
     }
 
+    /**
+     * @return mixed
+     */
     public function getValue() {
         return $this->value;
     }
 
+    /**
+     * @return array
+     */
     public function getErrors() {
         return count($this->errors) ? $this->errors : [];
     }
