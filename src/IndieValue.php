@@ -84,6 +84,16 @@ class IndieValue {
         }, $message );
     }
 
+    /**
+     * @param string $message
+     * @return IndieValue
+     */
+    public function boolean( $message ) {
+        return $this->pass( function( $value ) {
+            return $value === true || $value === false;
+        }, $message );
+    }
+
     public function isValid() {
         return count( $this->errors ) ? false : true;
     }

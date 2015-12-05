@@ -20,6 +20,10 @@ class IndieTest extends PHPUnit_Framework_TestCase {
         "url" => [
             'valid' => "http://google.com",
             'notvalid' => "15c1ds"
+        ],
+        "boolean" => [
+            "valid" => true,
+            "notvalid" => "12a"
         ]
     ];
 
@@ -119,5 +123,16 @@ class IndieTest extends PHPUnit_Framework_TestCase {
 
         $this->assertTrue( $validator->isValid('url[valid]') );
         $this->assertFalse( $validator->isValid('url[notvalid]') );
+    }
+
+    public function testBooleanValidator() {
+        $validator = new Indie();
+        $validator->validate($this->POST);
+
+        $validator->key( 'boolean[valid]' )->boolean( "Valid Boolean" );
+        $validator->key( 'boolean[notvalid]' )->boolean( "Not Valid Boolean" );
+
+        $this->assertTrue( $validator->isValid('boolean[valid]') );
+        $this->assertFalse( $validator->isValid('boolean[notvalid]') );
     }
 }
