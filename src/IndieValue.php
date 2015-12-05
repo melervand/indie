@@ -78,6 +78,12 @@ class IndieValue {
         }, $message );
     }
 
+    public function url( $message ) {
+        return $this->pass( function($value) {
+            return filter_var( $value, FILTER_VALIDATE_URL );
+        }, $message );
+    }
+
     public function isValid() {
         return count( $this->errors ) ? false : true;
     }

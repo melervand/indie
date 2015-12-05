@@ -16,6 +16,10 @@ class IndieTest extends PHPUnit_Framework_TestCase {
         'minmax' => [
             'min' => 10,
             'max' => 10
+        ],
+        "url" => [
+            'valid' => "http://google.com",
+            'notvalid' => "15c1ds"
         ]
     ];
 
@@ -104,5 +108,16 @@ class IndieTest extends PHPUnit_Framework_TestCase {
         }, "Custom" );
 
         $this->assertTrue( $validator->isValid('required_n') );
+    }
+
+    public function testURLValidation() {
+        $validator = new Indie();
+        $validator->validate($this->POST);
+
+        $validator->key( 'url[valid]' )->url( "Valid URL" );
+        $validator->key( 'url[notvalid]' )->url( "Not Valid URL" );
+
+        $this->assertTrue( $validator->isValid('url[valid]') );
+        $this->assertFalse( $validator->isValid('url[notvalid]') );
     }
 }
