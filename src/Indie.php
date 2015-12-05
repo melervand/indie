@@ -30,6 +30,7 @@ class Indie {
         if ( !isset( $this->obj[$indexpath] ) ) {
             $this->obj[ $indexpath ] = new IndieValue( $value );
         }
+
         return $this->obj[ $indexpath ];
     }
 
@@ -74,7 +75,7 @@ class Indie {
 
         $errors = [];
         foreach( $this->obj as $indexpath => $value ) {
-            $errors = array_merge( $errors, $value->getErrors() );
+            $errors[$indexpath] = $value->getErrors();
         }
 
         return $errors;

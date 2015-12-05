@@ -63,8 +63,8 @@ class IndieValue {
     protected function pass( $function, $message ) {
         $valid = $function( $this->value );
 
-        if ($valid !== true) {
-            $this->errors[ $this->indexpath ] = $message;
+        if (!$valid) {
+            $this->errors[] = $message;
         }
 
         return $this;

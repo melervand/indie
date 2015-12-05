@@ -19,6 +19,15 @@ class IndieTest extends PHPUnit_Framework_TestCase {
         ]
     ];
 
+    public function testNotPresentField() {
+        $validator = new Indie();
+        $validator->validate($this->POST);
+
+        $validator->key( 'notpresent' )->required( 'Required' )->countable('Countable');
+
+        $this->assertArrayHasKey( 'notpresent', $validator->getErrors() );
+    }
+
     public function testFullFormValidation() {
         $validator = new Indie();
         $validator->validate($this->POST);
@@ -71,10 +80,10 @@ class IndieTest extends PHPUnit_Framework_TestCase {
         $validator = new Indie();
         $validator->validate($this->POST);
 
-        $validator->key( 'first[second]' )->required('Required')->countable('Countable');
-        $validator->key( 'required_n' )->required('Required')->countable('Countable');
+        $validator->key('first[second]')->required('Required')->countable('Countable');
+        $validator->key('required_n')->required('Required')->countable('Countable');
 
-        $this->assertTrue( $validator->isValid( 'first[second]' ) );
-        $this->assertFalse( $validator->isValid( 'required_n' ) );
+        $this->assertTrue($validator->isValid('first[second]'));
+        $this->assertFalse($validator->isValid('required_n'));
     }
 }
