@@ -12,11 +12,9 @@ class IndieValue {
      * @return $this
      */
     public function required( $message ) {
-        $this->pass( function($value) {
+        return $this->pass( function($value) {
             return $value==''?false:true;
         }, $message);
-
-        return $this;
     }
 
     public function custom( $function, $message ) {
@@ -24,16 +22,28 @@ class IndieValue {
     }
 
     /**
+     * @param mixed $to
      * @param string $message
+     * @return IndieValue
+     */
+    public function equals( $to, $message ) {
+        return $this->pass( function($value) use ($to) {
+             return trim($value) == $to;
+        }, $message);
+    }
+
+    /**
+     * @param $message
+     * @return IndieValue
      */
     public function countable( $message ) {
-        $this->pass( function($value) {
+        return $this->pass( function($value) {
             return is_array( $value );
         }, $message );
     }
 
     public function numeric( $message ) {
-        $this->pass( function($value) {
+        return $this->pass( function($value) {
             return is_numeric( $value );
         }, $message );
     }
@@ -56,5 +66,7 @@ class IndieValue {
         if ($valid !== true) {
             $this->errors[ $this->indexpath ] = $message;
         }
+
+        return $this;
     }
 }
