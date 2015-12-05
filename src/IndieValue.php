@@ -17,8 +17,16 @@ class IndieValue {
         }, $message);
     }
 
+
+    /**
+     * @param callable $function
+     * @param string $message
+     * @return IndieValue
+     */
     public function custom( $function, $message ) {
-        //TODO: custom validator
+        return $this->pass( function($value) use ($function) {
+            return $function($value);
+        }, $message);
     }
 
     /**

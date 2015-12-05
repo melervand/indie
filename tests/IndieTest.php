@@ -94,4 +94,15 @@ class IndieTest extends PHPUnit_Framework_TestCase {
 
         $this->assertEquals( 2 , count( $validator->getErrors() ) );
     }
+
+    public function testCustomValidation() {
+        $validator = new Indie();
+        $validator->validate($this->POST);
+
+        $validator->key('required_n')->custom( function($value) {
+            return $value == 'Hello World!';
+        }, "Custom" );
+
+        $this->assertTrue( $validator->isValid('required_n') );
+    }
 }
