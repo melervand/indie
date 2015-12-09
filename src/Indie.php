@@ -12,7 +12,7 @@ class Indie {
      * @param array $data
      * @return Indie
      */
-    public function validate( $data = null ) {
+    public function import( $data = null ) {
         if ( $data !== null ) {
             $this->data = $data;
         }
@@ -22,13 +22,13 @@ class Indie {
 
     /**
      * @param string $indexpath
-     * @return IndieValue
+     * @return Value
      */
     public function key( $indexpath ) {
         $value = $this->parseIndexPath( $indexpath );
 
         if ( !isset( $this->obj[$indexpath] ) ) {
-            $this->obj[ $indexpath ] = new IndieValue( $value );
+            $this->obj[ $indexpath ] = new Value( $value );
         }
 
         return $this->obj[ $indexpath ];
