@@ -87,7 +87,7 @@ class Indie {
         $indexpath_array = $matches[1];
 
         if ( count( $indexpath_array ) == 0 ) {
-            return $this->data[$key];
+            return isset($this->data[$key])?$this->data[$key]:false;
         } else {
             array_unshift( $indexpath_array, $key );
             return $this->goByIndexPath( $indexpath_array, $this->data );
