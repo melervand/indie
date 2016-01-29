@@ -13,6 +13,9 @@ class IndieTest extends PHPUnit_Framework_TestCase {
                 'second_n' => 'Hello World!'
             ]
         ],
+        "import" => [
+            "example" => "example"
+        ],
         'minmax' => [
             'min' => 10,
             'max' => 10
@@ -114,6 +117,24 @@ class IndieTest extends PHPUnit_Framework_TestCase {
 
         $this->assertFalse( $validator->key('required_e')->isValid() );
         $this->assertTrue( $validator->key('required_n')->isValid() );
+    }
+
+    public function testImport() {
+        $validator = new Indie();
+        $validator->import($this->POST);
+        $validator->import( [
+            "import" => [
+                "example2" => "example2"
+            ]
+        ]);
+
+        $validator->key('import[example]')
+            ->with( new Rule\Equals( 'example' ), "Not Valid" );
+        $validator->key( 'import[example2]' )
+            ->with( new Rule\Equals( 'example2' ), "Not Valid" );
+
+        $this->assertTrue( $validator->isValid( 'import[example]' ) );
+        $this->assertTrue( $validator->isValid( 'import[example2]' ) );
     }
 
     public function testMinMaxValidator() {

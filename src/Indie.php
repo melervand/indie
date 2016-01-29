@@ -14,7 +14,7 @@ class Indie {
      */
     public function import( $data = null ) {
         if ( $data !== null ) {
-            $this->data = $data;
+            $this->data = $this->data?array_merge_recursive( $this->data, $data ):$data;
         }
 
         return $this;
@@ -59,6 +59,7 @@ class Indie {
      */
     public function getValues() {
         return array_map( function($value) {
+            /** @var Value $value */
             return $value->getValue();
         }, $this->obj);
     }
@@ -75,6 +76,7 @@ class Indie {
 
         $errors = [];
         foreach( $this->obj as $indexpath => $value ) {
+            /** @var Value $value */
             $errors[$indexpath] = $value->getErrors();
         }
 
