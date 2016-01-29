@@ -2,7 +2,7 @@
 namespace Rule;
 
 class Countable extends \Rule {
-    public function validate() {
-        return is_array( $this->value );
+    public function test( $value ) {
+        return is_array( $value );
     }
 }

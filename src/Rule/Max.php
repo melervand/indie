@@ -8,7 +8,7 @@ class Max extends \Rule {
         $this->max = $max;
     }
 
-    public function validate() {
-        return $this->value >= $this->max;
+    public function test( $value ) {
+        return $value >= $this->max;
     }
 }

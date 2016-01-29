@@ -1,9 +1,11 @@
 <?
 class Value {
+    private $explicit;
     private $value;
     private $errors;
 
-    public function __construct( $value ) {
+    public function __construct( $value, $explicit = true ) {
+        $this->explicit = $explicit;
         $this->value = $value;
     }
 
@@ -13,10 +15,9 @@ class Value {
      * @return $this
      */
     public function with( $rule, $message ) {
-        $valid = false;
-
         if ( $rule instanceof \Rule ) {
-            $valid = $rule->setValue( $this->value )->validate();
+            /** @var Rule $rule */
+            $valid = $rule->setValue( $this->value )->validate( $this->explicit );
         } else {
             $valid = $rule( $this->value );
         }

@@ -13,6 +13,20 @@ class IndieTest extends PHPUnit_Framework_TestCase {
                 'second_n' => 'Hello World!'
             ]
         ],
+        "array" => [
+            "valid" => [
+                10,
+                11,
+                12,
+                13
+            ],
+            "notvalid" => [
+                10,
+                11,
+                12,
+                "text"
+            ]
+        ],
         "import" => [
             "example" => "example"
         ],
@@ -117,6 +131,20 @@ class IndieTest extends PHPUnit_Framework_TestCase {
 
         $this->assertFalse( $validator->key('required_e')->isValid() );
         $this->assertTrue( $validator->key('required_n')->isValid() );
+    }
+
+    public function testArrayValidation() {
+        $validator = new Indie();
+        $validator->import($this->POST);
+
+        $validator->key( 'array[valid][]' )
+            ->with( new Rule\Numeric(), "Should be numeric" );
+
+        $validator->key( 'array[notvalid][]' )
+            ->with( new Rule\Numeric(), "Should be numeric" );
+
+        $this->assertTrue( $validator->isValid( 'array[valid][]' ) );
+        $this->assertFalse( $validator->isValid( 'array[notvalid][]' ) );
     }
 
     public function testImport() {

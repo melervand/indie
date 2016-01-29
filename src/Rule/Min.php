@@ -7,7 +7,7 @@ class Min extends \Rule {
         $this->min = $min;
     }
 
-    public function validate() {
-        return $this->value >= $this->min;
+    public function test( $value ) {
+        return $value >= $this->min;
     }
 }

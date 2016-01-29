@@ -26,9 +26,10 @@ class Indie {
      */
     public function key( $indexpath ) {
         $value = $this->parseIndexPath( $indexpath );
+        $isExplicit = $this->isIndexPathExplicit( $indexpath );
 
         if ( !isset( $this->obj[$indexpath] ) ) {
-            $this->obj[ $indexpath ] = new Value( $value );
+            $this->obj[ $indexpath ] = new Value( $value, $isExplicit );
         }
 
         return $this->obj[ $indexpath ];
@@ -94,6 +95,10 @@ class Indie {
             array_unshift( $indexpath_array, $key );
             return $this->goByIndexPath( $indexpath_array, $this->data );
         }
+    }
+
+    protected function isIndexPathExplicit( $indexpath ) {
+        return substr( $indexpath, -2 ) == "[]";
     }
 
     protected function goByIndexPath( $indexpath_array, $root_array ) {

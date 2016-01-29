@@ -8,5 +8,24 @@ abstract class Rule {
         return $this;
     }
 
-    abstract public function validate();
+    /**
+     * @param bool $explicit
+     * @return bool
+     */
+    public function validate( $explicit = true ) {
+        if ( $explicit && is_array( $this->value ) ) {
+            $checks = [];
+            foreach ($this->value as $value) {
+                $checks[] = $this->test( $value );
+            }
+
+            $valid = !in_array( false, $checks );
+        } else {
+            $valid = $this->test( $this->value );
+        }
+
+        return $valid;
+    }
+
+    abstract public function test( $value );
 }

@@ -8,7 +8,7 @@ class Equals extends \Rule {
         $this->to = $to;
     }
 
-    public function validate() {
+    public function test( $value ) {
         return trim($this->value) == $this->to;
     }
 }
