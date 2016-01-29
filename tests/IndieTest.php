@@ -1,5 +1,5 @@
 <?
-require 'vendor/autoload.php';
+//run tests from 'indie' folder like "vendor/bin/phpunit --bootstrap vendor/autoload.php tests/
 
 class IndieTest extends PHPUnit_Framework_TestCase {
     private $POST = [
@@ -24,6 +24,10 @@ class IndieTest extends PHPUnit_Framework_TestCase {
         "boolean" => [
             "valid" => true,
             "notvalid" => "12a"
+        ],
+        "email" => [
+            "valid" => "example@example.com",
+            "notvalid" => "example"
         ]
     ];
 
@@ -167,5 +171,16 @@ class IndieTest extends PHPUnit_Framework_TestCase {
 
         $this->assertTrue( $validator->isValid( 'required_n' ) );
         $this->assertFalse( $validator->isValid( 'required_e' ) );
+    }
+
+    public function testEmailValidator() {
+        $validator = new Indie();
+        $validator->import($this->POST);
+
+        $validator->key( 'email[valid]' )->with( new Rule\Email(), "Valid" );
+        $validator->key( 'email[notvalid]' )->with( new Rule\Email(), "Not Valid" );
+
+        $this->assertTrue( $validator->isValid( 'email[valid]' ) );
+        $this->assertFalse( $validator->isValid( 'email[notvalid]' ) );
     }
 }
