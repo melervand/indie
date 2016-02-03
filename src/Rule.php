@@ -27,5 +27,11 @@ abstract class Rule {
         return $valid;
     }
 
+
+    /**
+     * Implement validation rule
+     * @param $value
+     * @return bool
+     */
     abstract public function test( $value );
 }
