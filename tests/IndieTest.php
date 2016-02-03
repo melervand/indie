@@ -45,6 +45,10 @@ class IndieTest extends PHPUnit_Framework_TestCase {
         "email" => [
             "valid" => "example@example.com",
             "notvalid" => "example"
+        ],
+        "uuid" => [
+            "valid" => "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+            "notvalid" => "f47cdscdsDWF58cc-4372-a567-0e02b2c3d479"
         ]
     ];
 
@@ -231,5 +235,16 @@ class IndieTest extends PHPUnit_Framework_TestCase {
 
         $this->assertTrue( $validator->isValid( 'email[valid]' ) );
         $this->assertFalse( $validator->isValid( 'email[notvalid]' ) );
+    }
+
+    public function testUUIDValidator() {
+        $validator = new Indie();
+        $validator->import($this->POST);
+
+        $validator->key( 'uuid[valid]' )->with( new Rule\UUID('v4'), "Valid" );
+        $validator->key( 'uuid[notvalid]' )->with( new Rule\UUID('v4'), "Not Valid" );
+
+        $this->assertTrue( $validator->isValid( 'uuid[valid]' ) );
+        $this->assertFalse( $validator->isValid( 'uuid[notvalid]' ) );
     }
 }
