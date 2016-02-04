@@ -78,7 +78,10 @@ class Indie {
         $errors = [];
         foreach( $this->obj as $indexpath => $value ) {
             /** @var Value $value */
-            $errors[$indexpath] = $value->getErrors();
+            $value_errors = $value->getErrors();
+            if ( count($value_errors) ) {
+                $errors[$indexpath] = $value->getErrors();
+            }
         }
 
         return $errors;
