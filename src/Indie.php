@@ -5,7 +5,8 @@ class Indie {
 
 
     public function __construct( $data = null ) {
-        $data ?: [];
+        $this->data ?: [];
+        $this->obj = [];
     }
 
     /**

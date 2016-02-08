@@ -62,6 +62,10 @@ class IndieTest extends PHPUnit_Framework_TestCase {
         $this->assertFalse( $validator->isValid() );
     }
 
+    public function testEmptyValidations() {
+        $validator = new Indie();
+        $this->assertTrue( $validator->isValid() );
+    }
 
     public function testNotPresentField() {
         $validator = new Indie();
