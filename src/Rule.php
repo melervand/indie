@@ -30,8 +30,12 @@ abstract class Rule {
 
     /**
      * Implement validation rule
-     * @param $value
+     * @param array|string $value
      * @return bool
      */
     abstract public function test( $value );
+
+    public function __get($name) {
+        return $this->$name;
+    }
 }

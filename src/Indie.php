@@ -1,10 +1,13 @@
 <?
 class Indie {
+    private $l00n;
     private $data;
     private $obj;
 
 
-    public function __construct( $data = null ) {
+    public function __construct( $l00n = 'en_US', $data = null ) {
+        $this->l00n = $l00n;
+
         $this->data ?: [];
         $this->obj = [];
     }
@@ -30,7 +33,7 @@ class Indie {
         $isExplicit = $this->isIndexPathExplicit( $indexpath );
 
         if ( !isset( $this->obj[$indexpath] ) ) {
-            $this->obj[ $indexpath ] = new Value( $value, $isExplicit );
+            $this->obj[ $indexpath ] = new Value( $value, $isExplicit, $this->l00n );
         }
 
         return $this->obj[ $indexpath ];
@@ -81,7 +84,7 @@ class Indie {
             /** @var Value $value */
             $value_errors = $value->getErrors();
             if ( count($value_errors) ) {
-                $errors[$indexpath] = $value->getErrors();
+                $errors[$indexpath] = $value_errors;
             }
         }
 

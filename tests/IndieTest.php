@@ -251,4 +251,17 @@ class IndieTest extends PHPUnit_Framework_TestCase {
         $this->assertTrue( $validator->isValid( 'uuid[valid]' ) );
         $this->assertFalse( $validator->isValid( 'uuid[notvalid]' ) );
     }
+
+    public function testLocalization() {
+        $validator = new Indie('ru_RU');
+        $validator->import($this->POST);
+
+        $validator->key( 'uuid[valid]' )->with( new Rule\UUID('v4') );
+        $validator->key( 'uuid[notvalid]' )->with( new Rule\UUID('v4') );
+
+        $this->assertTrue( $validator->isValid( 'uuid[valid]' ) );
+        $this->assertFalse( $validator->isValid( 'uuid[notvalid]' ) );
+
+        $this->assertEquals( 'Неверный UUID версии v4', $validator->getErrors('uuid[notvalid]')[0], "Localization Failed" );
+    }
 }
