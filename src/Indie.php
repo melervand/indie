@@ -12,6 +12,11 @@ class Indie {
         $this->obj = [];
     }
 
+    public function clear() {
+        $this->data = [];
+        $this->obj = [];
+    }
+
     /**
      * @param array $data
      * @return Indie
