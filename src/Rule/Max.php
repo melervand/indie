@@ -9,6 +9,6 @@ class Max extends \Rule {
     }
 
     public function test( $value ) {
-        return $value >= $this->max;
+        return $value <= $this->max;
     }
 }
