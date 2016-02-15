@@ -2,266 +2,94 @@
 //run tests from 'indie' folder like "vendor/bin/phpunit --bootstrap vendor/autoload.php tests/
 
 class IndieTest extends PHPUnit_Framework_TestCase {
-    private $POST = [
-        'required_e' => '',
-        'required_n' => 'Hello World!',
-        'first' => [
-            'first_e' => '',
-            'first_n' => 'Hello World!',
-            'second' => [
-                'second_e' => '',
-                'second_n' => 'Hello World!'
-            ]
-        ],
-        "array" => [
-            "valid" => [
-                10,
-                11,
-                12,
-                13
-            ],
-            "notvalid" => [
-                10,
-                11,
-                12,
-                "text"
-            ]
-        ],
-        "import" => [
-            "example" => "example"
-        ],
-        'minmax' => [
-            'min' => 10,
-            'max' => 10
-        ],
-        "url" => [
-            'valid' => "http://google.com",
-            'notvalid' => "15c1ds"
-        ],
-        "boolean" => [
-            "valid" => true,
-            "notvalid" => "12a"
-        ],
-        "email" => [
-            "valid" => "example@example.com",
-            "notvalid" => "example"
-        ],
-        "uuid" => [
-            "valid" => "f47ac10b-58cc-4372-a567-0e02b2c3d479",
-            "notvalid" => "f47cdscdsDWF58cc-4372-a567-0e02b2c3d479"
-        ]
-    ];
+    /** @var  Indie $v */
+    private $v;
+    private $post;
 
-    public function testEmptyPost() {
-        $validator = new Indie();
-        $validator->import([]);
-
-        $validator->key( 'empty' )
-            ->with( new Rule\Required(), "Required" );
-
-        $this->assertFalse( $validator->isValid() );
+    public function setUp()
+    {
+        $this->post = json_decode( file_get_contents( __DIR__.'/data.json' ), true );
+        $this->v = new Indie();
+        $this->v->import( $this->post );
     }
 
-    public function testEmptyValidations() {
-        $validator = new Indie();
-        $this->assertTrue( $validator->isValid() );
+    public function testClearAndEmptyPOST() {
+        $this->v->key( 'required[valid]' )->with( new \Rule\Required() );
+        $this->assertTrue( $this->v->isValid( 'required[valid]' ) );
+
+        $this->v->clear();
+
+        $this->v->key( 'required[valid]' )->with( new \Rule\Required() );
+        $this->assertFalse( $this->v->isValid( 'required[valid]' ) );
+
+        //Reimport for next tests
+        $this->v->import( $this->post );
     }
 
     public function testNotPresentField() {
-        $validator = new Indie();
-        $validator->import($this->POST);
+        $this->v->key( 'notpresent' )
+            ->with( new Rule\Required(), "Required" );
 
-        $validator->key( 'notpresent' )
-            ->with( new Rule\Required(), "Required" )
-            ->with( new Rule\Countable(), "Countable" );
-
-        $this->assertArrayHasKey( 'notpresent', $validator->getErrors() );
-    }
-
-    public function testFullFormValidation() {
-        $validator = new Indie();
-        $validator->import($this->POST);
-
-        $validator->key('required_e')
-            ->with( new Rule\Required(), "Required");
-
-        $validator->key('required_n')
-            ->with( new Rule\Required(), "Required");
-
-        $this->assertFalse( $validator->isValid() );
+        $this->assertArrayHasKey( 'notpresent', $this->v->getErrors() );
     }
 
     public function testMultidimensionalValidation() {
-        $validator = new Indie();
-        $validator->import($this->POST);
+        $this->v->key('mdim[valid][valid]')
+            ->with( new Rule\Equals( 'valid' ) );
 
-        $validator->key('first[second][second_e]')
-            ->with( new Rule\Required(), 'Field is required');
-        $validator->key('first[second][second_n]')
-            ->with( new Rule\Required(), 'Field is required');
-
-        $this->assertFalse( $validator->isValid( 'first[second][second_e]' ) );
-        $this->assertTrue( $validator->isValid( 'first[second][second_n]' ) );
+        $this->assertTrue( $this->v->isValid( 'mdim[valid][valid]' ) );
     }
 
     public function testValuesGetter() {
-        $validator = new Indie();
-        $validator->import($this->POST);
-
-        $this->assertEquals('', $validator->key('required_e')->getValue() );
-        $this->assertEquals('Hello World!', $validator->key('required_n')->getValue() );
-
-        $this->assertEquals('', $validator->getValue('first[first_e]'));
-        $this->assertEquals('Hello World!', $validator->getValue('first[first_n]') );
+        $this->assertEquals('value', $this->v->key('value')->getValue() );
+        $this->assertEquals('value', $this->v->getValue('value'));
     }
 
     public function testChaining() {
-        $validator = new Indie();
-        $validator->import($this->POST);
+        $v = $this->v->key('required[valid]')
+            ->with( new Rule\Required() )
+            ->with( new Rule\Equals( 'string' ) );
 
-        $validator->key('first[second]')
-            ->with( new Rule\Required(), 'Required')
-            ->with( new Rule\Countable(), 'Countable');
-        $validator->key('required_n')
-            ->with( new Rule\Required(), 'Required')
-            ->with( new Rule\Countable(), 'Countable');
-
-        $this->assertTrue($validator->isValid('first[second]'));
-        $this->assertFalse($validator->isValid('required_n'));
-    }
-
-    public function testRequiredField() {
-        $validator = new Indie();
-        $validator->import($this->POST);
-
-        $validator->key('required_e')->with( new Rule\Required(), 'Field is required');
-        $validator->key('required_n')->with( new Rule\Required(), 'Field is required');
-
-        $this->assertFalse( $validator->key('required_e')->isValid() );
-        $this->assertTrue( $validator->key('required_n')->isValid() );
+        $this->assertInstanceOf( get_class( $this->v->key('required[valid]') ), $v );
     }
 
     public function testArrayValidation() {
-        $validator = new Indie();
-        $validator->import($this->POST);
+        $this->v->key( 'countable[valid][]' )
+            ->with( new Rule\Numeric() );
 
-        $validator->key( 'array[valid][]' )
-            ->with( new Rule\Numeric(), "Should be numeric" );
+        $this->v->key( 'countable[notvalid][]' )
+            ->with( new Rule\Numeric() );
 
-        $validator->key( 'array[notvalid][]' )
-            ->with( new Rule\Numeric(), "Should be numeric" );
-
-        $this->assertTrue( $validator->isValid( 'array[valid][]' ) );
-        $this->assertFalse( $validator->isValid( 'array[notvalid][]' ) );
+        $this->assertTrue( $this->v->isValid( 'countable[valid][]' ) );
+        $this->assertFalse( $this->v->isValid( 'countable[notvalid][]' ) );
     }
 
-    public function testImport() {
-        $validator = new Indie();
-        $validator->import($this->POST);
-        $validator->import( [
-            "import" => [
-                "example2" => "example2"
-            ]
+    public function testMultipleImport() {
+        $this->v->import( [
+            "import" => "import"
         ]);
 
-        $validator->key('import[example]')
-            ->with( new Rule\Equals( 'example' ), "Not Valid" );
-        $validator->key( 'import[example2]' )
-            ->with( new Rule\Equals( 'example2' ), "Not Valid" );
+        $this->v->key('import')
+            ->with( new Rule\Equals( 'import' ) );
 
-        $this->assertTrue( $validator->isValid( 'import[example]' ) );
-        $this->assertTrue( $validator->isValid( 'import[example2]' ) );
-    }
-
-    public function testMinMaxValidator() {
-        $validator = new Indie();
-        $validator->import($this->POST);
-
-        $validator->key('minmax[min]')->with( new Rule\Min( 9 ), "Min9" );
-        $validator->key('minmax[min]')->with( new Rule\Min( 11 ), "Min11" );
-
-        $validator->key('minmax[max]')->with( new Rule\Max( 9 ), "Max9" );
-        $validator->key('minmax[max]')->with( new Rule\Max( 11 ), "Max11" );
-
-        $this->assertEquals( 2 , count( $validator->getErrors() ) );
+        $this->assertTrue( $this->v->isValid( 'import' ) );
     }
 
     public function testCustomValidation() {
-        $validator = new Indie();
-        $validator->import($this->POST);
+        $this->v->key('countable[valid]')->with( function($value) {
+            return $value[-1] == 15;
+        } );
 
-        $validator->key('required_n')->with( function($value) {
-            return $value == 'Hello World!';
-        }, "Custom" );
-
-        $this->assertTrue( $validator->isValid('required_n') );
-    }
-
-    public function testURLValidation() {
-        $validator = new Indie();
-        $validator->import($this->POST);
-
-        $validator->key( 'url[valid]' )->with( new Rule\Url(), "Valid URL" );
-        $validator->key( 'url[notvalid]' )->with( new Rule\Url(), "Not Valid URL" );
-
-        $this->assertTrue( $validator->isValid('url[valid]') );
-        $this->assertFalse( $validator->isValid('url[notvalid]') );
-    }
-
-    public function testBooleanValidator() {
-        $validator = new Indie();
-        $validator->import($this->POST);
-
-        $validator->key('boolean[valid]')->with( new Rule\Boolean(), "Valid Boolean");
-        $validator->key('boolean[notvalid]')->with( new Rule\Boolean(), "Not Valid Boolean");
-
-        $this->assertTrue($validator->isValid('boolean[valid]'));
-        $this->assertFalse($validator->isValid('boolean[notvalid]'));
-    }
-
-    public function testEqualsValidator() {
-        $validator = new Indie();
-        $validator->import($this->POST);
-
-        $validator->key( 'required_n' )->with( new Rule\Equals( 'Hello World!' ), "Not Equal" );
-        $validator->key( 'required_e' )->with( new Rule\Equals( 'Hello World!' ), "Not Equal" );
-
-        $this->assertTrue( $validator->isValid( 'required_n' ) );
-        $this->assertFalse( $validator->isValid( 'required_e' ) );
-    }
-
-    public function testEmailValidator() {
-        $validator = new Indie();
-        $validator->import($this->POST);
-
-        $validator->key( 'email[valid]' )->with( new Rule\Email(), "Valid" );
-        $validator->key( 'email[notvalid]' )->with( new Rule\Email(), "Not Valid" );
-
-        $this->assertTrue( $validator->isValid( 'email[valid]' ) );
-        $this->assertFalse( $validator->isValid( 'email[notvalid]' ) );
-    }
-
-    public function testUUIDValidator() {
-        $validator = new Indie();
-        $validator->import($this->POST);
-
-        $validator->key( 'uuid[valid]' )->with( new Rule\UUID('v4'), "Valid" );
-        $validator->key( 'uuid[notvalid]' )->with( new Rule\UUID('v4'), "Not Valid" );
-
-        $this->assertTrue( $validator->isValid( 'uuid[valid]' ) );
-        $this->assertFalse( $validator->isValid( 'uuid[notvalid]' ) );
+        $this->assertTrue( $this->v->isValid('countable[notvalid]') );
     }
 
     public function testLocalization() {
-        $validator = new Indie('ru_RU');
-        $validator->import($this->POST);
+        $v = new Indie('ru_RU');
+        $v->import( $this->post );
 
-        $validator->key( 'uuid[valid]' )->with( new Rule\UUID('v4') );
-        $validator->key( 'uuid[notvalid]' )->with( new Rule\UUID('v4') );
+        $v->key( 'uuid[valid]' )->with( new Rule\UUID('v4') );
+        $v->key( 'uuid[notvalid]' )->with( new Rule\UUID('v4') );
 
-        $this->assertTrue( $validator->isValid( 'uuid[valid]' ) );
-        $this->assertFalse( $validator->isValid( 'uuid[notvalid]' ) );
-
-        $this->assertEquals( 'Неверный UUID версии v4', $validator->getErrors('uuid[notvalid]')[0], "Localization Failed" );
+        $this->assertEquals( 'Неверный UUID версии v4', $v->getErrors('uuid[notvalid]')[0], "Localization Failed" );
     }
 }
