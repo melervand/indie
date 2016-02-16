@@ -13,6 +13,14 @@ class IndieTest extends PHPUnit_Framework_TestCase {
         $this->v->import( $this->post );
     }
 
+    public function testConstructor() {
+        $v = new Indie('en_US', $this->post );
+        $v->key('required[valid]')
+            ->with( new \Rule\Required() );
+
+        $this->assertTrue( $v->isValid( 'required[valid]' ) );
+    }
+
     public function testClearAndEmptyPOST() {
         $this->v->key( 'required[valid]' )->with( new \Rule\Required() );
         $this->assertTrue( $this->v->isValid( 'required[valid]' ) );

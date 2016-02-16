@@ -8,7 +8,7 @@ class Indie {
     public function __construct( $l00n = 'en_US', $data = null ) {
         $this->l00n = $l00n;
 
-        $this->data ?: [];
+        $this->data = $data ?: [];
         $this->obj = [];
     }
 
