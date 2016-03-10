@@ -1,4 +1,8 @@
 {
+  "alpha": {
+    "valid": "alpha",
+    "notvalid": "alp12"
+  },
   "boolean": {
     "valid": true,
     "notvalid": "string"
