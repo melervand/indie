@@ -2,10 +2,12 @@
 namespace Rule;
 
 class Equals extends \Rule {
-    private $to;
+    protected $to;
+    protected $field;
 
-    public function __construct( $to ) {
+    public function __construct( $to, $field = '' ) {
         $this->to = $to;
+        $this->field = $field;
     }
 
     public function test( $value ) {

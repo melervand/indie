@@ -29,6 +29,7 @@ class Indie {
     }
 
     /**
+     * One line key setter
      * @param string $indexpath
      * @return Value
      */
@@ -44,6 +45,15 @@ class Indie {
         }
 
         return $this->obj[ $indexpath ];
+    }
+
+    /**
+     * Required key setting helper
+     * @param string $indexpath
+     * @return Value
+     */
+    public function required( $indexpath ) {
+        return $this->key( $indexpath, false );
     }
 
     /**

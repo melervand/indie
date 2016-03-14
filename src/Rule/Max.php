@@ -2,8 +2,7 @@
 namespace Rule;
 
 class Max extends \Rule {
-    private $max;
-
+    protected $max;
     public function __construct( $max ) {
         $this->max = $max;
     }

@@ -54,10 +54,6 @@ class ValidationsTest extends PHPUnit_Framework_TestCase {
         $this->validate( 'uuid', new \Rule\UUID('v4') );
     }
 
-    public function testRequired() {
-        $this->validate( 'required', new \Rule\Required() );
-    }
-
     private function validate( $key, $rule ) {
         $this->v->key( $key.'[valid]' )
             ->with( $rule );

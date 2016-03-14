@@ -15,19 +15,18 @@ class IndieTest extends PHPUnit_Framework_TestCase {
 
     public function testConstructor() {
         $v = new Indie('en_US', $this->post );
-        $v->key('required[valid]')
-            ->with( new \Rule\Required() );
+        $v->key('required[valid]');
 
         $this->assertTrue( $v->isValid( 'required[valid]' ) );
     }
 
     public function testClearAndEmptyPOST() {
-        $this->v->key( 'required[valid]' )->with( new \Rule\Required() );
+        $this->v->key( 'required[valid]' );
         $this->assertTrue( $this->v->isValid( 'required[valid]' ) );
 
         $this->v->clear();
 
-        $this->v->key( 'required[valid]' )->with( new \Rule\Required() );
+        $this->v->key( 'required[valid]' );
         $this->assertFalse( $this->v->isValid( 'required[valid]' ) );
 
         //Reimport for next tests
@@ -35,6 +34,9 @@ class IndieTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testOptionalField() {
+        $this->v->required( 'optional_set_as_required' )
+            ->with( new \Rule\UUID('v4') );
+
         $this->v->optional( 'optional' )
             ->with( new \Rule\Alpha() );
 
@@ -49,6 +51,7 @@ class IndieTest extends PHPUnit_Framework_TestCase {
 
         $this->assertArrayNotHasKey( 'optional', $this->v->getErrors() );
         $this->assertArrayNotHasKey( 'mdim[notvalid][optional]', $this->v->getErrors() );
+        $this->assertArrayHasKey( 'optional_set_as_required', $this->v->getErrors() );
         $this->assertArrayHasKey( 'mdim[valid][valid]', $this->v->getErrors() );
     }
 
@@ -66,7 +69,6 @@ class IndieTest extends PHPUnit_Framework_TestCase {
 
     public function testChaining() {
         $v = $this->v->key('required[valid]')
-            ->with( new Rule\Required() )
             ->with( new Rule\Equals( 'string' ) );
 
         $this->assertInstanceOf( get_class( $this->v->key('required[valid]') ), $v );
@@ -109,6 +111,6 @@ class IndieTest extends PHPUnit_Framework_TestCase {
         $v->key( 'uuid[valid]' )->with( new Rule\UUID('v4') );
         $v->key( 'uuid[notvalid]' )->with( new Rule\UUID('v4') );
 
-        $this->assertEquals( 'Неверный UUID версии v4', $v->getErrors('uuid[notvalid]')[0], "Localization Failed" );
+        $this->assertEquals( 'Значение \'string\' не является корректным UUID версии v4', $v->getErrors('uuid[notvalid]')[0], "Localization Failed" );
     }
 }
