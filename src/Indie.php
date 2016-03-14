@@ -34,10 +34,10 @@ class Indie {
      * @return Value
      */
     public function key( $indexpath ) {
-        $value = $this->parseIndexPath( $indexpath );
-        $isExplicit = $this->isIndexPathExplicit( $indexpath );
-
         if ( !isset( $this->obj[$indexpath] ) ) {
+            $value = $this->parseIndexPath( $indexpath );
+            $isExplicit = $this->isIndexPathExplicit( $indexpath );
+
             $this->obj[ $indexpath ] = new Value( $value, $isExplicit, $this->l00n );
         }
 
@@ -102,7 +102,7 @@ class Indie {
         $indexpath_array = $matches[1];
 
         if ( count( $indexpath_array ) == 0 ) {
-            return isset($this->data[$key])?$this->data[$key]:false;
+            return isset($this->data[$key])?$this->data[$key]:'';
         } else {
             array_unshift( $indexpath_array, $key );
             return $this->goByIndexPath( $indexpath_array, $this->data );
@@ -111,6 +111,10 @@ class Indie {
 
     protected function isIndexPathExplicit( $indexpath ) {
         return substr( $indexpath, -2 ) == "[]";
+    }
+
+    protected function isIndexPathExist( $indexpath ) {
+
     }
 
     protected function goByIndexPath( $indexpath_array, $root_array ) {
