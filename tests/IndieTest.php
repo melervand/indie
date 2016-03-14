@@ -35,7 +35,7 @@ class IndieTest extends PHPUnit_Framework_TestCase {
 
     public function testOptionalField() {
         $this->v->required( 'optional_set_as_required' )
-            ->with( new \Rule\Alpha() );
+            ->with( new \Rule\UUID('v4') );
 
         $this->v->optional( 'optional' )
             ->with( new \Rule\Alpha() );
@@ -111,6 +111,6 @@ class IndieTest extends PHPUnit_Framework_TestCase {
         $v->key( 'uuid[valid]' )->with( new Rule\UUID('v4') );
         $v->key( 'uuid[notvalid]' )->with( new Rule\UUID('v4') );
 
-        $this->assertEquals( 'Неверный UUID версии v4', $v->getErrors('uuid[notvalid]')[0], "Localization Failed" );
+        $this->assertEquals( 'Значение \'string\' не является корректным UUID версии v4', $v->getErrors('uuid[notvalid]')[0], "Localization Failed" );
     }
 }

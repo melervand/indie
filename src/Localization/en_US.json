@@ -1,0 +1,14 @@
+{
+  "required": "Field is required",
+  "alpha": "Must contain only letters (a-z)",
+  "boolean": "Must be a boolean",
+  "countable": "Must be countable",
+  "email": "Must be valid email",
+  "equals": "Must be equals to ':field' value",
+  "max": "Must be less than :max",
+  "min": "Must be greater than :min",
+  "md5": "Must be a valid MD5",
+  "numeric": "Must be numeric",
+  "url": "Must be an URL",
+  "uuid": "Value ':value' is wrong UUID version :version"
+}
