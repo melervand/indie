@@ -29,14 +29,17 @@ class Value {
             /** @var Rule $rule */
             $valid = $rule->setValue( $this->value )->validate( $this->explicit );
 
-            if ($message == null) {
-                $reflection = new ReflectionClass( $rule );
-                $localization_class = sprintf( '\Localization\%s\%s', $this->l00n, $reflection->getShortName() );
+            $reflection = new ReflectionClass( $rule );
+            $rule_name = strtolower( $reflection->getShortName() );
 
-                if ( class_exists( $localization_class ) ) {
-                    /** @var \Localization\Localization $localization */
-                    $localization = new $localization_class($rule);
-                    $message = $localization->message();
+            $localization_path =  __DIR__ . '/Localization/' . $this->l00n . '.json';
+            if ( file_exists( $localization_path ) ) {
+                $localization = json_decode( file_get_contents( $localization_path ), true );
+
+                if ($message == null) {
+                    $message = $rule->message( isset($localization[$rule_name])?$localization[$rule_name]:'' );
+                } else {
+                    $message = $rule->message( $message );
                 }
             }
         } else {
