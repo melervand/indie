@@ -2,7 +2,7 @@
 namespace Rule;
 
 class Min extends \Rule {
-    private $min;
+    protected $min;
     public function __construct( $min ) {
         $this->min = $min;
     }
