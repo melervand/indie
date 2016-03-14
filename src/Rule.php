@@ -27,13 +27,23 @@ abstract class Rule {
         return $valid;
     }
 
-
     /**
      * Implement validation rule
      * @param array|string $value
      * @return bool
      */
     abstract public function test( $value );
+
+    public function message( $format ) {
+        $message = $format;
+        preg_match_all( '/\:([a-zA-Z0-9]+)/i', $format, $matches );
+
+        foreach( $matches[1] as $match ) {
+            $message = str_replace( ':'.$match, $this->$match, $message );
+        }
+
+        return $message;
+    }
 
     public function __get($name) {
         return $this->$name;

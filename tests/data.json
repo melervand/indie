@@ -54,7 +54,8 @@
   "mdim": {
     "valid": {
       "valid": "valid"
-    }
+    },
+    "notvalid": "notvalid"
   },
 
   "value": "value"
