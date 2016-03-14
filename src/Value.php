@@ -16,7 +16,7 @@ class Value {
         $this->optional = $optional;
         $this->indexpath_exists = $indexpath_exists;
 
-        $this->with( new \Rule\Required() );
+        $this->required();
     }
 
     /**
@@ -67,5 +67,15 @@ class Value {
      */
     public function getErrors() {
         return count($this->errors) ? $this->errors : [];
+    }
+
+    /**
+     * Default required check
+     * Called as first check
+     */
+    private function required() {
+        $this->with( function($value) {
+            return $value==''?false:true;
+        } );
     }
 }

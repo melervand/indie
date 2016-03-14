@@ -15,19 +15,18 @@ class IndieTest extends PHPUnit_Framework_TestCase {
 
     public function testConstructor() {
         $v = new Indie('en_US', $this->post );
-        $v->key('required[valid]')
-            ->with( new \Rule\Required() );
+        $v->key('required[valid]');
 
         $this->assertTrue( $v->isValid( 'required[valid]' ) );
     }
 
     public function testClearAndEmptyPOST() {
-        $this->v->key( 'required[valid]' )->with( new \Rule\Required() );
+        $this->v->key( 'required[valid]' );
         $this->assertTrue( $this->v->isValid( 'required[valid]' ) );
 
         $this->v->clear();
 
-        $this->v->key( 'required[valid]' )->with( new \Rule\Required() );
+        $this->v->key( 'required[valid]' );
         $this->assertFalse( $this->v->isValid( 'required[valid]' ) );
 
         //Reimport for next tests
@@ -35,7 +34,7 @@ class IndieTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testOptionalField() {
-        $this->v->key( 'optional_set_as_required' )
+        $this->v->required( 'optional_set_as_required' )
             ->with( new \Rule\Alpha() );
 
         $this->v->optional( 'optional' )
@@ -70,7 +69,6 @@ class IndieTest extends PHPUnit_Framework_TestCase {
 
     public function testChaining() {
         $v = $this->v->key('required[valid]')
-            ->with( new Rule\Required() )
             ->with( new Rule\Equals( 'string' ) );
 
         $this->assertInstanceOf( get_class( $this->v->key('required[valid]') ), $v );
