@@ -19,7 +19,7 @@
   },
   "equal": {
     "valid": "equal",
-    "notavlid": ""
+    "notvalid": "notequal"
   },
   "max": {
     "valid": 9,
