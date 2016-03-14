@@ -5,12 +5,16 @@ class Value {
     private $explicit;
     private $value;
     private $errors;
+    private $indexpath_exists;
+    private $optional;
 
-    public function __construct( $value, $explicit = true, $l00n ) {
+    public function __construct( $value, $optional, $indexpath_exists, $explicit = true, $l00n ) {
         $this->l00n = $l00n;
 
         $this->explicit = $explicit;
         $this->value = $value;
+        $this->optional = $optional;
+        $this->indexpath_exists = $indexpath_exists;
     }
 
     /**
@@ -37,7 +41,7 @@ class Value {
             $valid = $rule( $this->value );
         }
 
-        $valid ?: $this->errors[] = $message;
+        !$valid && !$this->optional ? $this->errors[] = $message:false;
 
         return $this;
     }

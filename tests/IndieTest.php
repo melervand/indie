@@ -34,11 +34,22 @@ class IndieTest extends PHPUnit_Framework_TestCase {
         $this->v->import( $this->post );
     }
 
-    public function testNotPresentField() {
-        $this->v->key( 'notpresent' )
-            ->with( new Rule\Required(), "Required" );
+    public function testOptionalField() {
+        $this->v->optional( 'optional' )
+            ->with( new \Rule\Alpha() );
 
-        $this->assertArrayHasKey( 'notpresent', $this->v->getErrors() );
+        $this->v->optional( 'mdim[notvalid][optional]' )
+            ->with( new \Rule\Alpha() );
+
+        $this->v->key( 'mdim[valid][valid]' )
+            ->with( new \Rule\Numeric() );
+
+        $this->v->optional( 'mdim[valid][valid]' )
+            ->with( new \Rule\Numeric() );
+
+        $this->assertArrayNotHasKey( 'optional', $this->v->getErrors() );
+        $this->assertArrayNotHasKey( 'mdim[notvalid][optional]', $this->v->getErrors() );
+        $this->assertArrayHasKey( 'mdim[valid][valid]', $this->v->getErrors() );
     }
 
     public function testMultidimensionalValidation() {

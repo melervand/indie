@@ -4,7 +4,6 @@ class Indie {
     private $data;
     private $obj;
 
-
     public function __construct( $l00n = 'en_US', $data = null ) {
         $this->l00n = $l00n;
 
@@ -33,15 +32,27 @@ class Indie {
      * @param string $indexpath
      * @return Value
      */
-    public function key( $indexpath ) {
-        if ( !isset( $this->obj[$indexpath] ) ) {
-            $value = $this->parseIndexPath( $indexpath );
+    public function key( $indexpath, $optional = false ) {
+        if ( !isset($this->obj[ $indexpath ]) ) {
+            $indexpath_array = $this->parseIndexPath( $indexpath );
+            $indexpath_exists = $this->isIndexPathExist( $indexpath_array, $this->data );
+
+            $value = $this->getIndexPathValue( $indexpath_array, $this->data );
             $isExplicit = $this->isIndexPathExplicit( $indexpath );
 
-            $this->obj[ $indexpath ] = new Value( $value, $isExplicit, $this->l00n );
+            $this->obj[ $indexpath ] = new Value( $value, $optional, $indexpath_exists, $isExplicit, $this->l00n );
         }
 
         return $this->obj[ $indexpath ];
+    }
+
+    /**
+     * Optional key setting helper
+     * @param string $indexpath
+     * @return Value
+     */
+    public function optional( $indexpath ) {
+        return $this->key( $indexpath, true );
     }
 
     /**
@@ -96,32 +107,54 @@ class Indie {
         return $errors;
     }
 
+    /**
+     * Parses string indexpath and returns array of keys
+     * @param string $indexpath
+     * @return string[]
+     */
     protected function parseIndexPath( $indexpath ) {
         $key = explode('[', $indexpath)[0];
         preg_match_all('/\[([a-z0-9_-]+)\]/i', $indexpath, $matches);
         $indexpath_array = $matches[1];
+        array_unshift( $indexpath_array, $key );
 
-        if ( count( $indexpath_array ) == 0 ) {
-            return isset($this->data[$key])?$this->data[$key]:'';
+        return $indexpath_array;
+    }
+
+    /**
+     * Checks whether indexpath exists
+     * @param string[] $indexpath_array
+     * @param array $root_array
+     * @return bool
+     */
+    protected function isIndexPathExist( $indexpath_array, $root_array ) {
+        if ( count( $indexpath_array ) > 1 ) {
+            return $this->isIndexPathExist( array_slice($indexpath_array, 1), $root_array[$indexpath_array[0]] );
         } else {
-            array_unshift( $indexpath_array, $key );
-            return $this->goByIndexPath( $indexpath_array, $this->data );
+            return isset( $root_array[ $indexpath_array[0] ] );
         }
     }
 
+    /**
+     * Checks if user wants to validate array
+     * @param string $indexpath
+     * @return bool
+     */
     protected function isIndexPathExplicit( $indexpath ) {
         return substr( $indexpath, -2 ) == "[]";
     }
 
-    protected function isIndexPathExist( $indexpath ) {
-
-    }
-
-    protected function goByIndexPath( $indexpath_array, $root_array ) {
+    /**
+     * Traverses array and returns value by indexpath
+     * @param string[] $indexpath_array
+     * @param array $root_array
+     * @return string
+     */
+    protected function getIndexPathValue( $indexpath_array, $root_array ) {
         if( count($indexpath_array) > 1 ) {
-            return $this->goByIndexPath(array_slice($indexpath_array, 1), $root_array[$indexpath_array[0]]);
+            return $this->getIndexPathValue(array_slice($indexpath_array, 1), $root_array[$indexpath_array[0]]);
         } else {
-            return $root_array[ $indexpath_array[0] ];
+            return isset($root_array[ $indexpath_array[0] ])?$root_array[ $indexpath_array[0] ]:'';
         }
     }
 }

@@ -27,7 +27,6 @@ abstract class Rule {
         return $valid;
     }
 
-
     /**
      * Implement validation rule
      * @param array|string $value
