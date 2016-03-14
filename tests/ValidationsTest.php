@@ -27,7 +27,7 @@ class ValidationsTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testEqual() {
-        $this->validate( 'equal', new \Rule\Equals('equal') );
+        $this->validate( 'equal', new \Rule\Equals('equal', 'equal[valid]') );
     }
 
     public function testMax() {

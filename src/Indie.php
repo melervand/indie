@@ -1,4 +1,8 @@
 <?
+/** @property string $l00n */
+/** @property array data */
+/** @property Value[] $obj */
+
 class Indie {
     private $l00n;
     private $data;
@@ -70,11 +74,18 @@ class Indie {
      * @return bool
      */
     public function isValid( $indexpath = null ) {
+        $result = true;
         if ( $indexpath ) {
-            return $this->key( $indexpath )->isValid();
+            if ( isset( $this->obj[ $indexpath ] ) ) {
+                $result = $this->obj[ $indexpath ]->isValid();
+            }
+
+            return $result;
         }
 
-        return count( $this->getErrors() ) ? false : true;
+        $result = count( $this->getErrors() ) ? false : true;
+
+        return $result;
     }
 
     /**
@@ -82,7 +93,8 @@ class Indie {
      * @return string
      */
     public function getValue( $indexpath ) {
-        return $this->key($indexpath)->getValue();
+        $indexpath_array = $this->parseIndexPath( $indexpath );
+        return $this->getIndexPathValue( $indexpath_array, $this->data );
     }
 
     /**
@@ -95,17 +107,20 @@ class Indie {
         }, $this->obj);
     }
 
-
     /**
      * @param string $indexpath
      * @return array
      */
     public function getErrors( $indexpath = null ) {
+        $errors = [];
         if ( $indexpath ) {
-            return $this->key( $indexpath )->getErrors();
+            if ( isset( $this->obj[ $indexpath ] ) ) {
+                $errors = $this->obj[ $indexpath ]->getErrors();
+            }
+
+            return $errors;
         }
 
-        $errors = [];
         foreach( $this->obj as $indexpath => $value ) {
             /** @var Value $value */
             $value_errors = $value->getErrors();

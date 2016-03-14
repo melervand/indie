@@ -28,25 +28,16 @@ class Value {
         if ( $rule instanceof \Rule ) {
             /** @var Rule $rule */
             $valid = $rule->setValue( $this->value )->validate( $this->explicit );
-
-            $reflection = new ReflectionClass( $rule );
-            $rule_name = strtolower( $reflection->getShortName() );
-
-            $localization_path =  __DIR__ . '/Localization/' . $this->l00n . '.json';
-            if ( file_exists( $localization_path ) ) {
-                $localization = json_decode( file_get_contents( $localization_path ), true );
-
-                if ($message == null) {
-                    $message = $rule->message( isset($localization[$rule_name])?$localization[$rule_name]:'' );
-                } else {
-                    $message = $rule->message( $message );
-                }
-            }
+            $message = $this->localize( $rule, $message );
         } else {
             $valid = $rule( $this->value );
         }
 
-        !$valid && !$this->optional ? $this->errors[] = $message:false;
+        if ( $this->indexpath_exists ) {
+            $valid ?: $this->errors[] = $message;
+        } else if ( !$this->optional ) {
+            $valid ?: $this->errors[] = $message;
+        }
 
         return $this;
     }
@@ -73,12 +64,40 @@ class Value {
     }
 
     /**
+     * @param \Rule $rule
+     * @param string $format
+     * @return string $message
+     */
+    private function localize( $rule, $format = null ) {
+        $reflection = new ReflectionClass( $rule );
+        $rule_name = strtolower( $reflection->getShortName() );
+
+        $format = $rule->message( !$format ? $this->getLocalizedString( $rule_name ) : $format );
+
+        return $format;
+    }
+
+    /**
+     * @param string $key
+     * @return string
+     */
+    private function getLocalizedString( $key ) {
+        $localization = [];
+        $localization_path =  __DIR__ . '/Localization/' . $this->l00n . '.json';
+        if ( file_exists( $localization_path ) ) {
+            $localization = json_decode( file_get_contents( $localization_path ), true );
+        }
+
+        return isset( $localization[$key] ) ? $localization[ $key ] : '';
+    }
+
+    /**
      * Default required check
      * Called as first check
      */
     private function required() {
         $this->with( function($value) {
             return $value==''?false:true;
-        } );
+        }, $this->getLocalizedString( 'required' ) );
     }
 }
