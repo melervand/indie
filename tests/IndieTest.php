@@ -35,6 +35,9 @@ class IndieTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testOptionalField() {
+        $this->v->key( 'optional_set_as_required' )
+            ->with( new \Rule\Alpha() );
+
         $this->v->optional( 'optional' )
             ->with( new \Rule\Alpha() );
 
@@ -49,6 +52,7 @@ class IndieTest extends PHPUnit_Framework_TestCase {
 
         $this->assertArrayNotHasKey( 'optional', $this->v->getErrors() );
         $this->assertArrayNotHasKey( 'mdim[notvalid][optional]', $this->v->getErrors() );
+        $this->assertArrayHasKey( 'optional_set_as_required', $this->v->getErrors() );
         $this->assertArrayHasKey( 'mdim[valid][valid]', $this->v->getErrors() );
     }
 

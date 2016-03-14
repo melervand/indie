@@ -15,6 +15,8 @@ class Value {
         $this->value = $value;
         $this->optional = $optional;
         $this->indexpath_exists = $indexpath_exists;
+
+        $this->with( new \Rule\Required() );
     }
 
     /**
