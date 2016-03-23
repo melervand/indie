@@ -104,6 +104,17 @@ class IndieTest extends PHPUnit_Framework_TestCase {
         $this->assertTrue( $this->v->isValid('countable[notvalid]') );
     }
 
+    public function testReturnEmptyValues() {
+        $this->v->required('md5[valid]');
+        $this->v->required('md5[notvalid]');
+
+        $values = $this->v->getValues();
+        $this->assertArrayNotHasKey( 'md5[notvalid]', $values );
+
+        $values = $this->v->getValues( true );
+        $this->assertArrayHasKey( 'md5[notvalid]', $values );
+    }
+
     public function testLocalization() {
         $v = new Indie('ru_RU');
         $v->import( $this->post );

@@ -52,8 +52,12 @@ class Value {
     /**
      * @return mixed
      */
-    public function getValue() {
-        return $this->value;
+    public function getValue( $emptyValue = false ) {
+        if ( $emptyValue ) {
+            return $this->value;
+        }
+
+        return !empty($this->value) ? $this->value : NULL;
     }
 
     /**
