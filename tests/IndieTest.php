@@ -9,12 +9,13 @@ class IndieTest extends PHPUnit_Framework_TestCase {
     public function setUp()
     {
         $this->post = json_decode( file_get_contents( __DIR__.'/data.json' ), true );
-        $this->v = new Indie();
+        $this->v = Indie::withLocalization('en_US');
         $this->v->import( $this->post );
     }
 
     public function testConstructor() {
-        $v = new Indie('en_US', $this->post );
+        $v = Indie::withLocalization('en_US');
+        $v->import( $this->post );
         $v->key('required[valid]');
 
         $this->assertTrue( $v->isValid( 'required[valid]' ) );
@@ -116,7 +117,7 @@ class IndieTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testLocalization() {
-        $v = new Indie('ru_RU');
+        $v = Indie::withLocalization('ru_RU');
         $v->import( $this->post );
 
         $v->key( 'uuid[valid]' )->with( new Rule\UUID('v4') );

@@ -8,11 +8,15 @@ class Indie {
     private $data;
     private $obj;
 
-    public function __construct( $l00n = 'en_US', $data = null ) {
+    private function __construct( $l00n = 'en_US' ) {
         $this->l00n = $l00n;
 
-        $this->data = $data ?: [];
+        $this->data = [];
         $this->obj = [];
+    }
+
+    public static function withLocalization( $l00n ) {
+        return new self( $l00n );
     }
 
     public function clear() {

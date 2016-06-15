@@ -6,7 +6,7 @@ class ValidationsTest extends PHPUnit_Framework_TestCase {
     public function setUp()
     {
         $post = json_decode( file_get_contents( __DIR__.'/data.json' ), true );
-        $this->v = new Indie();
+        $this->v = Indie::withLocalization('en_US');
         $this->v->import( $post );
     }
 
