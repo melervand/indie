@@ -64,6 +64,11 @@ class IndieTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testValuesGetter() {
+        $this->v->key( 'numeric[valid]' )
+            ->with( new \Rule\Numeric() );
+
+        $this->assertArrayHasKey('numeric[valid]', $this->v->getValues());
+        
         $this->assertEquals('value', $this->v->key('value')->getValue() );
         $this->assertEquals('value', $this->v->getValue('value'));
     }

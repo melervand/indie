@@ -57,7 +57,7 @@ class Value {
             return $this->value;
         }
 
-        return !empty($this->value) ? $this->value : NULL;
+        return $this->value==="" ? NULL : $this->value;
     }
 
     /**

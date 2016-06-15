@@ -108,7 +108,7 @@ class Indie {
     public function getValues( $emptyValues = false ) {
         $values = array_filter($this->obj, function($value) use ($emptyValues) {
             /** @var Value $value */
-            return is_string( $value->getValue( $emptyValues ) );
+            return !is_null( $value->getValue( $emptyValues ) );
         });
 
         return array_map( function($value) use ( $emptyValues ) {
