@@ -101,7 +101,7 @@ class Value {
      */
     private function required() {
         $this->with( function($value) {
-            return $value==''?false:true;
+            return $value===""?false:true;
         }, $this->getLocalizedString( 'required' ) );
     }
 }
