@@ -3,6 +3,10 @@
     "valid": "alpha",
     "notvalid": "alp12"
   },
+  "alias": {
+    "valid": "alias_test",
+    "notvalid": "alias12"
+  },
   "boolean": {
     "valid": true,
     "notvalid": "string"

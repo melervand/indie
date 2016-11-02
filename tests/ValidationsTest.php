@@ -14,6 +14,10 @@ class ValidationsTest extends PHPUnit_Framework_TestCase {
         $this->validate( 'alpha', new \Rule\Alpha() );
     }
 
+    public function testAlias() {
+        $this->validate( 'alias', new \Rule\Alias() );
+    }
+
     public function testBoolean() {
         $this->validate( 'boolean', new \Rule\Boolean() );
     }
