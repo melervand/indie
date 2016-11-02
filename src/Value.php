@@ -16,7 +16,9 @@ class Value {
         $this->optional = $optional;
         $this->indexpath_exists = $indexpath_exists;
 
-        $this->required();
+        if ( !$this->optional ) {
+            $this->required();
+        }
     }
 
     /**
