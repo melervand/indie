@@ -46,8 +46,6 @@ class Value {
 
         if ( $this->indexpath_exists ) {
             $valid ?: $this->errors[] = $message;
-        } else if ( !$this->optional ) {
-            $valid ?: $this->errors[] = $message;
         }
 
         return $this;
