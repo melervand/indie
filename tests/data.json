@@ -15,7 +15,10 @@
     "valid": [
       10,11,12,13,14,15
     ],
-    "notvalid": "string"
+    "notvalid": "string",
+    "notvalid2": [
+      10,11,12,"",14,15
+    ]
   },
   "email": {
     "valid": "example@example.com",

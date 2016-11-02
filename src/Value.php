@@ -15,6 +15,7 @@ class Value {
         $this->value = $value;
         $this->optional = $optional;
         $this->indexpath_exists = $indexpath_exists;
+        $this->errors = [];
 
         if ( !$this->optional ) {
             $this->required();
@@ -27,25 +28,28 @@ class Value {
      * @return $this
      */
     public function with( $rule, $message = null ) {
-        if ( $rule instanceof \Rule ) {
-            /** @var Rule $rule */
-            $valid = $rule->setValue( $this->value )->validate( $this->explicit );
-            $message = $this->localize( $rule, $message );
-        } else {
-            if ( $this->explicit && is_array( $this->value ) ) {
-                $checks = [];
-                foreach ($this->value as $value) {
-                    $checks[] = $rule( $value );
+        if ( !$this->optional ) {
+            if ($this->explicit && is_array($this->value)) {
+                foreach ($this->value as $key => $value) {
+                    if ($rule instanceof \Rule) {
+                        /** @var \Rule $rule */
+                        $valid = $rule->setValue($value)->validate();
+                        $message = $this->localize($rule, $message);
+                        $valid ?: $this->errors[$key][] = $message;
+                    } else {
+                        $rule($value) ?: $this->errors[$key][] = $message;
+                    }
                 }
-
-                $valid = !in_array( false, $checks );
             } else {
-                $valid = $rule( $this->value );
+                if ($rule instanceof \Rule) {
+                    /** @var \Rule $rule */
+                    $valid = $rule->setValue($this->value)->validate();
+                    $message = $this->localize($rule, $message);
+                    $valid ?: $this->errors[] = $message;
+                } else {
+                    $rule($this->value) ?: $this->errors[] = $message;
+                }
             }
-        }
-
-        if ( $this->indexpath_exists ) {
-            $valid ?: $this->errors[] = $message;
         }
 
         return $this;
@@ -55,7 +59,7 @@ class Value {
      * @return bool
      */
     public function isValid() {
-        return count( $this->errors ) ? false : true;
+        return count($this->errors) ? false : true;
     }
 
     /**
