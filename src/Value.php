@@ -28,7 +28,9 @@ class Value {
      * @return $this
      */
     public function with( $rule, $message = null ) {
-        if ( !$this->optional ) {
+        if ( !$this->indexpath_exists && $this->optional ) {
+
+        } else {
             if ($this->explicit && is_array($this->value)) {
                 foreach ($this->value as $key => $value) {
                     if ($rule instanceof \Rule) {
