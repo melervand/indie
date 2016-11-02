@@ -91,6 +91,21 @@ class IndieTest extends PHPUnit_Framework_TestCase {
         $this->assertFalse( $this->v->isValid( 'countable[notvalid][]' ) );
     }
 
+    public function testArrayCustomValidation() {
+        $this->v->key( 'countable[valid][]' )
+            ->with( function($number) {
+                return is_numeric( $number );
+            });
+
+        $this->v->key( 'countable[notvalid][]' )
+            ->with( function($number) {
+                return is_numeric( $number );
+            });
+
+        $this->assertTrue( $this->v->isValid( 'countable[valid][]' ) );
+        $this->assertFalse( $this->v->isValid( 'countable[notvalid][]' ) );
+    }
+
     public function testMultipleImport() {
         $this->v->import( [
             "import" => "import"

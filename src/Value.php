@@ -30,7 +30,16 @@ class Value {
             $valid = $rule->setValue( $this->value )->validate( $this->explicit );
             $message = $this->localize( $rule, $message );
         } else {
-            $valid = $rule( $this->value );
+            if ( $this->explicit && is_array( $this->value ) ) {
+                $checks = [];
+                foreach ($this->value as $value) {
+                    $checks[] = $rule( $value );
+                }
+
+                $valid = !in_array( false, $checks );
+            } else {
+                $valid = $rule( $this->value );
+            }
         }
 
         if ( $this->indexpath_exists ) {
