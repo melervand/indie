@@ -4,8 +4,8 @@
     "notvalid": "alp12"
   },
   "alias": {
-    "valid": "alias_test",
-    "notvalid": "alias12"
+    "valid": "alias_test_88",
+    "notvalid": "alias-88"
   },
   "boolean": {
     "valid": true,
