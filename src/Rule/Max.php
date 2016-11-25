@@ -7,7 +7,8 @@ class Max extends \Rule {
         $this->max = $max;
     }
 
-    public function test( $value ) {
+    public function test($value, $key = null)
+    {
         return $value <= $this->max;
     }
 }

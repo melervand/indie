@@ -12,17 +12,18 @@ abstract class Rule {
      * @param bool $explicit
      * @return bool
      */
-    public function validate() {
-        $valid = $this->test( $this->value );
+    public function validate( $key = null ) {
+        $valid = $this->test( $this->value, $key );
         return $valid;
     }
 
     /**
      * Implement validation rule
      * @param array|string $value
+     * @param integer $key
      * @return bool
      */
-    abstract public function test( $value );
+    abstract public function test( $value, $key = null );
 
     public function message( $format ) {
         $message = $format;

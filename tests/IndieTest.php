@@ -102,6 +102,11 @@ class IndieTest extends PHPUnit_Framework_TestCase {
                 return is_numeric( $number );
             });
 
+        $this->v->key( 'countable[valid][]' )
+            ->with( function($number, $key) {
+                return $number-10 == $key;
+            });
+
         $this->assertTrue( $this->v->isValid( 'countable[valid][]' ) );
         $this->assertFalse( $this->v->isValid( 'countable[notvalid][]' ) );
     }

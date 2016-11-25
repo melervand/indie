@@ -10,7 +10,8 @@ class Equals extends \Rule {
         $this->field = $field;
     }
 
-    public function test( $value ) {
+    public function test($value, $key = null)
+    {
         return trim($this->value) == $this->to;
     }
 }

@@ -7,7 +7,8 @@ class Min extends \Rule {
         $this->min = $min;
     }
 
-    public function test( $value ) {
+    public function test($value, $key = null)
+    {
         return $value >= $this->min;
     }
 }

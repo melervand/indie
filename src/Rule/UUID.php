@@ -17,7 +17,8 @@ class UUID extends \Rule {
         $this->version = $version;
     }
 
-    public function test( $value ) {
+    public function test($value, $key = null)
+    {
         return preg_match( $this->regexes[$this->version], $value );
     }
 }

@@ -35,11 +35,11 @@ class Value {
                 foreach ($this->value as $key => $value) {
                     if ($rule instanceof \Rule) {
                         /** @var \Rule $rule */
-                        $valid = $rule->setValue($value)->validate();
+                        $valid = $rule->setValue($value)->validate( $key );
                         $message = $this->localize($rule, $message);
                         $valid ?: $this->errors[$key][] = $message;
                     } else {
-                        $rule($value) ?: $this->errors[$key][] = $message;
+                        $rule($value, $key) ?: $this->errors[$key][] = $message;
                     }
                 }
             } else {
