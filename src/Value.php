@@ -49,7 +49,7 @@ class Value {
                     $message = $this->localize($rule, $message);
                     $valid ?: $this->errors[] = $message;
                 } else {
-                    $rule($this->value) ?: $this->errors[] = $message;
+                    $rule($this->value, null) ?: $this->errors[] = $message;
                 }
             }
         }
