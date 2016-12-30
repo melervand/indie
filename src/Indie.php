@@ -166,7 +166,8 @@ class Indie {
         if ( count( $indexpath_array ) > 1 ) {
             return $this->isIndexPathExist( array_slice($indexpath_array, 1), $root_array[$indexpath_array[0]] );
         } else {
-            return isset( $root_array[ $indexpath_array[0] ] );
+            $indexPathExists = isset( $root_array[ $indexpath_array[0] ] ) && $root_array[ $indexpath_array[0] ] !== "";
+            return $indexPathExists;
         }
     }
 

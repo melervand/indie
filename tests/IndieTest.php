@@ -38,8 +38,11 @@ class IndieTest extends PHPUnit_Framework_TestCase {
         $this->v->required( 'optional_set_as_required' )
             ->with( new \Rule\UUID('v4') );
 
-        $this->v->optional( 'optional' )
-            ->with( new \Rule\Alpha() );
+        $this->v->optional( 'optional[valid]' )
+            ->with( new \Rule\Numeric() );
+
+        $this->v->optional( 'optional[notvalid]' )
+            ->with( new \Rule\Numeric() );
 
         $this->v->optional( 'mdim[notvalid][optional]' )
             ->with( new \Rule\Alpha() );
@@ -50,7 +53,8 @@ class IndieTest extends PHPUnit_Framework_TestCase {
         $this->v->optional( 'mdim[valid][valid]' )
             ->with( new \Rule\Numeric() );
 
-        $this->assertArrayNotHasKey( 'optional', $this->v->getErrors() );
+        $this->assertArrayNotHasKey( 'optional[valid]', $this->v->getErrors() );
+        $this->assertArrayHasKey( 'optional[notvalid]', $this->v->getErrors() );
         $this->assertArrayNotHasKey( 'mdim[notvalid][optional]', $this->v->getErrors() );
         $this->assertArrayHasKey( 'optional_set_as_required', $this->v->getErrors() );
         $this->assertArrayHasKey( 'mdim[valid][valid]', $this->v->getErrors() );

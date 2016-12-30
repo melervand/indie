@@ -56,7 +56,10 @@
     "valid": "string",
     "notvalid": ""
   },
-
+  "optional": {
+    "valid": "",
+    "notvalid": "TEXT"
+  },
 
   "mdim": {
     "valid": {
