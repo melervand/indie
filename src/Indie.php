@@ -102,11 +102,15 @@ class Indie {
         $indexpath_array = $this->parseIndexPath( $indexpath );
         $value = $this->getIndexPathValue( $indexpath_array, $this->data );
 
-        if ( $html_escape ) {
-            return htmlspecialchars( $value );
+        if ( !is_array( $value ) ) {
+            if ( $html_escape ) {
+                return htmlspecialchars( $value );
+            }
+
+            $value = htmlspecialchars_decode($value);
         }
 
-        return htmlspecialchars_decode($value);
+        return $value;
     }
 
     /**
