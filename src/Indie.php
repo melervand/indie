@@ -95,31 +95,29 @@ class Indie {
     /**
      * Returns indexpath value
      * @param string $indexpath
-     * @param bool $html_escape
      * @return string
      */
-    public function getValue( $indexpath, $html_escape = false ) {
+    public function getValue( $indexpath ) {
         $indexpath_array = $this->parseIndexPath( $indexpath );
         $value = $this->getIndexPathValue( $indexpath_array, $this->data );
-
-        if ( !is_array( $value ) ) {
-            if ( $html_escape ) {
-                return htmlspecialchars( $value );
-            }
-
-            $value = htmlspecialchars_decode($value);
-        }
 
         return $value;
     }
 
     /**
      * Shorthand for escaped value
+     * Returns escaped value if it is a string
      * @param string $indexpath
-     * @return string
+     * @return mixed
      */
     public function getEscapedValue( $indexpath ) {
-        return $this->getValue( $indexpath, true );
+        $value = $this->getValue( $indexpath );
+
+        if ( is_string( $value ) ) {
+            $value = htmlspecialchars( $value );
+        }
+
+        return $value;
     }
 
     /**
