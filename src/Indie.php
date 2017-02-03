@@ -30,7 +30,7 @@ class Indie {
      */
     public function import( $data = null ) {
         if ( $data !== null ) {
-            $this->data = $this->data?array_merge_recursive( $this->data, $data ):$data;
+            $this->data = $this->data?array_replace_recursive( $this->data, $data ):$data;
         }
 
         return $this;
