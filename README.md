@@ -1,15 +1,6 @@
-#Indie - Independent validator 
+# Indie - Independent validator 
 
-<!--
-----------
- - Installation
- - Introduction
- - Basic usage
- - License
-----------
--->
-
-###Installation
+### Installation
 Package is available only on GitHub, but you can install it using Composer.
 PHP 5.4+ is required.
 
@@ -21,7 +12,7 @@ PHP 5.4+ is required.
     "repositories": [
         {
             "type":"git",
-            "url":"http://github.com/melervand/indie"
+            "url":"https://github.com/melervand/indie"
         }
     ]
 }
