@@ -207,7 +207,11 @@ class Indie {
      */
     protected function getIndexPathValue( $indexpath_array, $root_array ) {
         if( count($indexpath_array) > 1 ) {
-            return $this->getIndexPathValue(array_slice($indexpath_array, 1), $root_array[$indexpath_array[0]]);
+            if (isset($root_array[$indexpath_array[0]])) {
+                return $this->getIndexPathValue(array_slice($indexpath_array, 1), $root_array[$indexpath_array[0]]);
+            } else {
+                return '';
+            }
         } else {
             return isset($root_array[ $indexpath_array[0] ])?$root_array[ $indexpath_array[0] ]:'';
         }
