@@ -1,9 +1,15 @@
 <?
-namespace Rule;
 
-class Min extends \Rule {
+namespace Indie\Rule;
+
+use Indie\Rule;
+
+class Min extends Rule
+{
     protected $min;
-    public function __construct( $min ) {
+
+    public function __construct($min)
+    {
         $this->min = $min;
     }
 

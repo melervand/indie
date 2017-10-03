@@ -1,171 +1,84 @@
 <?
-//run tests from 'indie' folder like "vendor/bin/phpunit --bootstrap vendor/autoload.php tests/
 
-class IndieTest extends PHPUnit_Framework_TestCase {
-    /** @var  Indie $v */
-    private $v;
-    private $post;
+use Indie\Indie;
+use Indie\Rule;
 
-    public function setUp()
+class IndieTest extends \PHPUnit\Framework\TestCase
+{
+    public function testRequiredField()
     {
-        $this->post = json_decode( file_get_contents( __DIR__.'/data.json' ), true );
-        $this->v = Indie::withLocalization('en_US');
-        $this->v->import( $this->post );
-    }
-
-    public function testConstructor() {
-        $v = Indie::withLocalization('en_US');
-        $v->import( $this->post );
-        $v->key('required[valid]');
-
-        $this->assertTrue( $v->isValid( 'required[valid]' ) );
-    }
-
-    public function testClearAndEmptyPOST() {
-        $this->v->key( 'required[valid]' );
-        $this->assertTrue( $this->v->isValid( 'required[valid]' ) );
-
-        $this->v->clear();
-
-        $this->v->key( 'required[valid]' );
-        $this->assertFalse( $this->v->isValid( 'required[valid]' ) );
-
-        //Reimport for next tests
-        $this->v->import( $this->post );
-    }
-
-    public function testOptionalField() {
-        $this->v->required( 'optional_set_as_required' )
-            ->with( new \Rule\UUID('v4') );
-
-        $this->v->optional( 'optional[valid]' )
-            ->with( new \Rule\Numeric() );
-
-        $this->v->optional( 'optional[notvalid]' )
-            ->with( new \Rule\Numeric() );
-
-        $this->v->optional( 'mdim[notvalid][optional]' )
-            ->with( new \Rule\Alpha() );
-
-        $this->v->key( 'mdim[valid][valid]' )
-            ->with( new \Rule\Numeric() );
-
-        $this->v->optional( 'mdim[valid][valid]' )
-            ->with( new \Rule\Numeric() );
-
-        $this->assertArrayNotHasKey( 'optional[valid]', $this->v->getErrors() );
-        $this->assertArrayHasKey( 'optional[notvalid]', $this->v->getErrors() );
-        $this->assertArrayNotHasKey( 'mdim[notvalid][optional]', $this->v->getErrors() );
-        $this->assertArrayHasKey( 'optional_set_as_required', $this->v->getErrors() );
-        $this->assertArrayHasKey( 'mdim[valid][valid]', $this->v->getErrors() );
-    }
-
-    public function testMultidimensionalValidation() {
-        $this->v->key('mdim[valid][valid]')
-            ->with( new Rule\Equals( 'valid' ) );
-
-        $this->assertTrue( $this->v->isValid( 'mdim[valid][valid]' ) );
-    }
-
-    public function testValuesGetter() {
-        $this->v->key( 'numeric[valid]' )
-            ->with( new \Rule\Numeric() );
-
-        $this->assertArrayHasKey('numeric[valid]', $this->v->getValues());
-        
-        $this->assertEquals('value', $this->v->key('value')->getValue() );
-        $this->assertEquals('value', $this->v->getValue('value'));
-    }
-
-    public function testChaining() {
-        $v = $this->v->key('required[valid]')
-            ->with( new Rule\Equals( 'string' ) );
-
-        $this->assertInstanceOf( get_class( $this->v->key('required[valid]') ), $v );
-    }
-
-    public function testArrayValidation() {
-        $this->v->key( 'countable[valid][]' )
-            ->with( new Rule\Numeric() );
-
-        $this->v->key( 'countable[notvalid][]' )
-            ->with( new Rule\Numeric() );
-
-        $this->assertTrue( $this->v->isValid( 'countable[valid][]' ) );
-        $this->assertFalse( $this->v->isValid( 'countable[notvalid][]' ) );
-    }
-
-    public function testArrayCustomValidation() {
-        $this->v->key( 'countable[valid][]' )
-            ->with( function($number) {
-                return is_numeric( $number );
-            });
-
-        $this->v->key( 'countable[notvalid][]' )
-            ->with( function($number) {
-                return is_numeric( $number );
-            });
-
-        $this->v->key( 'countable[valid][]' )
-            ->with( function($number, $key) {
-                return $number-10 == $key;
-            });
-
-        $this->assertTrue( $this->v->isValid( 'countable[valid][]' ) );
-        $this->assertFalse( $this->v->isValid( 'countable[notvalid][]' ) );
-    }
-
-    public function testArrayPerItemValidation() {
-        $this->v->key( 'countable[valid][]' )
-            ->with( new \Rule\Numeric() );
-
-        $this->v->key( 'countable[notvalid][]' )
-            ->with( new \Rule\Numeric() );
-
-        $this->v->key( 'countable[notvalid2][]' )
-            ->with( new \Rule\Numeric() );
-
-        $this->assertTrue( $this->v->isValid( 'countable[valid][]' ) );
-        $this->assertFalse( $this->v->isValid( 'countable[notvalid][]' ) );
-    }
-
-    public function testMultipleImport() {
-        $this->v->import( [
-            "import" => "import"
+        $v = new Indie([
+            "required"  => "required",
+            "_required" => "",
         ]);
 
-        $this->v->key('import')
-            ->with( new Rule\Equals( 'import' ) );
+        $v->required('required');
+        $v->required('_required');
 
-        $this->assertTrue( $this->v->isValid( 'import' ) );
+        $this->assertTrue($v->isValid('required'));
+        $this->assertFalse($v->isValid('_required'));
     }
 
-    public function testCustomValidation() {
-        $this->v->key('countable[valid]')->with( function($value) {
-            return $value[-1] == 15;
-        } );
+    public function testOptionalField()
+    {
+        $v = new Indie([
+            'optional'       => '',
+            'optionalEmail'  => 'example@example.com',
+            '_optionalEmail' => 'string',
+        ]);
 
-        $this->assertTrue( $this->v->isValid('countable[notvalid]') );
+        $v->optional('optional');
+        $v->optional('optionalEmail')
+          ->with(new Rule\Email());
+        $v->optional('_optionalEmail')
+          ->with(new Rule\Email());
+
+        $this->assertTrue($v->isValid('optional'));
+        $this->assertTrue($v->isValid('optionalEmail'));
+        $this->assertFalse($v->isValid('_optionalEmail'));
     }
 
-    public function testReturnEmptyValues() {
-        $this->v->required('md5[valid]');
-        $this->v->required('md5[notvalid]');
+    public function testDotNotation()
+    {
+        $v = new Indie([
+            'dot' => [
+                'notation'  => 'required',
+                '_notation' => '',
+            ],
+        ]);
 
-        $values = $this->v->getValues();
-        $this->assertArrayNotHasKey( 'md5[notvalid]', $values );
+        $v->required('dot.notation');
+        $v->required('dot._notation');
 
-        $values = $this->v->getValues( true );
-        $this->assertArrayHasKey( 'md5[notvalid]', $values );
+        $this->assertTrue($v->isValid('dot.notation'));
+        $this->assertFalse($v->isValid('dot._notation'));
     }
 
-    public function testLocalization() {
-        $v = Indie::withLocalization('ru_RU');
-        $v->import( $this->post );
+    public function testArrayValidation()
+    {
+        $v = new Indie([
+            'dot' => [
+                'notation'  => [
+                    10, 11, 12, 13, 14, 15,
+                ],
+                '_notation' => "string",
+            ],
+        ]);
 
-        $v->key( 'uuid[valid]' )->with( new Rule\UUID('v4') );
-        $v->key( 'uuid[notvalid]' )->with( new Rule\UUID('v4') );
+        $v->key('dot.notation', true)
+          ->with(new Rule\Required())
+          ->with(new Rule\Numeric());
 
-        $this->assertEquals( 'Значение \'string\' не является корректным UUID версии v4', $v->getErrors('uuid[notvalid]')[0], "Localization Failed" );
+        $v->key('dot._notation', true)
+          ->with(new Rule\Required())
+          ->with(new Rule\Numeric());
+
+        $v->key('dot.notation.0', false)
+          ->with(new Rule\Required())
+          ->with(new Rule\Numeric());
+
+        $this->assertTrue($v->isValid('dot.notation'));
+        $this->assertFalse($v->isValid('dot._notation'));
+        $this->assertTrue($v->isValid('dot.notation.0'));
     }
 }

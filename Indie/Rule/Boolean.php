@@ -1,7 +1,10 @@
 <?
-namespace Rule;
+namespace Indie\Rule;
 
-class Boolean extends \Rule {
+use Indie\Rule;
+
+class Boolean extends Rule
+{
     public function test($value, $key = null)
     {
         return $value === true || $value === false;

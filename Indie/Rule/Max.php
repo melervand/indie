@@ -1,9 +1,15 @@
 <?
-namespace Rule;
 
-class Max extends \Rule {
+namespace Indie\Rule;
+
+use Indie\Rule;
+
+class Max extends Rule
+{
     protected $max;
-    public function __construct( $max ) {
+
+    public function __construct($max)
+    {
         $this->max = $max;
     }
 

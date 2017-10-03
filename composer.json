@@ -1,13 +1,22 @@
 {
   "name": "melervand/indie",
-  "description": "Independent Validator",
-  "require": {
-    "php": ">=5.4"
-  },
+  "description": "Independent Form Validator",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Ervand Melikian",
+      "email": "melervand@gmail.com"
+    }
+  ],
+  "minimum-stability": "beta",
+  "require": {},
   "require-dev": {
-    "phpunit/phpunit": "4.8.*"
+    "phpunit/phpunit": "^6.2"
   },
   "autoload": {
-    "psr-4": { "": "src/" }
+    "psr-4": {
+      "": ""
+    }
   }
 }
