@@ -153,10 +153,12 @@ class Indie
             throw new NoRuleAssignedException();
         }
 
-        return array_map(function($value) {
+        return array_filter(array_map(function($value) {
             /** @var \Indie\Value $value */
             return $value->getErrors();
-        }, $this->data, array_keys($this->data));
+        }, $this->data), function($element) {
+            return $element ? true : false;
+        });
     }
 
     /**
