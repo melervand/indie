@@ -5,6 +5,20 @@ use Indie\Rule;
 
 class IndieTest extends \PHPUnit\Framework\TestCase
 {
+    public function testClearFunction()
+    {
+        $v = new Indie([
+            "required"  => "required",
+            "_required" => "",
+        ]);
+
+        $this->assertInternalType("string", $v->getValue('required'));
+
+        $v->clear();
+
+        $this->assertEquals("", $v->getValue('required'));
+    }
+
     public function testRequiredField()
     {
         $v = new Indie([
@@ -80,5 +94,38 @@ class IndieTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($v->isValid('dot.notation'));
         $this->assertFalse($v->isValid('dot._notation'));
         $this->assertTrue($v->isValid('dot.notation.0'));
+    }
+
+    public function testValueGetter()
+    {
+        $v = new Indie([
+            'dot' => [
+                'notation'  => [
+                    10, 11, 12, 13, 14, 15,
+                ],
+                '_notation' => "string",
+            ],
+        ]);
+
+        $v->required('dot.notation');
+        $v->required('dot._notation');
+
+        $this->assertEquals([10, 11, 12, 13, 14, 15], $v->getValue('dot.notation'));
+        $this->assertEquals("string", $v->getValue('dot._notation'));
+    }
+
+    public function testErrorGetter()
+    {
+        $v = new Indie([
+            "required"  => "required",
+            "_required" => "",
+        ]);
+
+        $v->required('required', "ERROR1");
+        $v->required('_required', "ERROR2");
+
+        $this->assertArrayHasKey("_required", $v->getErrors());
+        $this->assertNotInternalType("array", $v->getErrors('required'));
+        $this->assertContains("ERROR2", $v->getErrors('_required'));
     }
 }
