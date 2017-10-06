@@ -108,7 +108,10 @@ class Indie
     {
         if ( $path ) {
             if ( isset($this->data[ $path ]) ) {
-                return ($this->data[ $path ])->isValid();
+                /** @var \Indie\Value $value */
+                $value = $this->data[ $path ];
+
+                return $value->isValid();
             }
 
             throw new NoRuleAssignedException();
@@ -147,7 +150,10 @@ class Indie
     {
         if ( $path ) {
             if ( isset($this->data[ $path ]) ) {
-                return ($this->data[ $path ])->getErrors();
+                /** @var \Indie\Value $value */
+                $value = $this->data[ $path ];
+
+                return $value->getErrors();
             }
 
             throw new NoRuleAssignedException();
