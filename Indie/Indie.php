@@ -2,7 +2,6 @@
 
 namespace Indie;
 
-use Indie\Exceptions\NoRuleAssignedException;
 use Indie\Rule\Required;
 
 class Indie
@@ -106,18 +105,7 @@ class Indie
      */
     public function isValid($path = null)
     {
-        if ( $path ) {
-            if ( isset($this->data[ $path ]) ) {
-                /** @var \Indie\Value $value */
-                $value = $this->data[ $path ];
-
-                return $value->isValid();
-            }
-
-            throw new NoRuleAssignedException();
-        }
-
-        return count($this->getErrors()) ? false : true;
+        return count($this->getErrors( $path )) ? false : true;
     }
 
     /**
@@ -149,14 +137,15 @@ class Indie
     public function getErrors($path = null)
     {
         if ( $path ) {
+            $errors = [];
+
             if ( isset($this->data[ $path ]) ) {
                 /** @var \Indie\Value $value */
                 $value = $this->data[ $path ];
-
-                return $value->getErrors();
+                $errors = $value->getErrors();
             }
 
-            throw new NoRuleAssignedException();
+            return $errors;
         }
 
         return array_filter(array_map(function($value) {
