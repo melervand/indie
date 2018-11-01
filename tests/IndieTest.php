@@ -3,129 +3,192 @@
 use Indie\Indie;
 use Indie\Rule;
 
-class IndieTest extends \PHPUnit\Framework\TestCase
-{
-    public function testClearFunction()
-    {
-        $v = new Indie([
+class IndieTest extends \PHPUnit\Framework\TestCase {
+
+    /**
+     * Tests GET method workflow
+     * If no rules applied, Indie is always valid
+     */
+    public function testGetWorkflow() {
+        $isPost = false;
+
+        $v = new Indie();
+
+        if ( $isPost ) {
+            $v->import([
+                "required"  => "required",
+                "_required" => "",
+            ]);
+
+            $v->required( 'required' );
+            $v->required( '_required' );
+        }
+
+        $this->assertTrue( $v->isValid( 'required' ) );
+        $this->assertTrue( $v->isValid( '_required' ) );
+
+        $this->assertInternalType('array', $v->getErrors('required'));
+        $this->assertInternalType('array', $v->getErrors('_required'));
+
+        $this->assertEquals(0, count( $v->getErrors('required') ));
+        $this->assertEquals(0, count( $v->getErrors('_required') ));
+
+        $this->assertTrue( $v->isValid() );
+
+        $this->assertTrue( $v->isValid('required') );
+        $this->assertTrue( $v->isValid('_required') );
+    }
+
+    /**
+     * Tests POST method workflow
+     * If no rules applied, Indie is always valid
+     */
+    public function testPostWorkflow() {
+        $isPost = true;
+
+        $v = new Indie();
+
+        if ( $isPost ) {
+            $v->import( [
+                "required"  => "required",
+                "_required" => "",
+            ] );
+
+            $v->required( 'required' );
+            $v->required( '_required' );
+
+            $this->assertTrue( $v->isValid( 'required' ) );
+            $this->assertFalse( $v->isValid( '_required' ) );
+
+            $this->assertInternalType('array', $v->getErrors('required'));
+            $this->assertInternalType('array', $v->getErrors('_required'));
+
+            $this->assertEquals(0, count( $v->getErrors('required') ));
+            $this->assertEquals(1, count( $v->getErrors('_required') ));
+
+            $this->assertFalse( $v->isValid() );
+
+            $this->assertTrue( $v->isValid('required') );
+            $this->assertFalse( $v->isValid('_required') );
+        }
+
+        //or always valid
+    }
+
+    public function testClearFunction() {
+        $v = new Indie( [
             "required"  => "required",
             "_required" => "",
-        ]);
+        ] );
 
-        $this->assertInternalType("string", $v->getValue('required'));
+        $this->assertInternalType( "string", $v->getValue( 'required' ) );
 
         $v->clear();
 
-        $this->assertEquals("", $v->getValue('required'));
+        $this->assertEquals( "", $v->getValue( 'required' ) );
     }
 
-    public function testRequiredField()
-    {
-        $v = new Indie([
+    public function testRequiredField() {
+        $v = new Indie( [
             "required"  => "required",
             "_required" => "",
-        ]);
+        ] );
 
-        $v->required('required');
-        $v->required('_required');
+        $v->required( 'required' );
+        $v->required( '_required' );
 
-        $this->assertTrue($v->isValid('required'));
-        $this->assertFalse($v->isValid('_required'));
+        $this->assertTrue( $v->isValid( 'required' ) );
+        $this->assertFalse( $v->isValid( '_required' ) );
     }
 
-    public function testOptionalField()
-    {
-        $v = new Indie([
+    public function testOptionalField() {
+        $v = new Indie( [
             'optional'       => '',
             'optionalEmail'  => 'example@example.com',
             '_optionalEmail' => 'string',
-        ]);
+        ] );
 
-        $v->optional('optional');
-        $v->optional('optionalEmail')
-          ->with(new Rule\Email());
-        $v->optional('_optionalEmail')
-          ->with(new Rule\Email());
+        $v->optional( 'optional' );
+        $v->optional( 'optionalEmail' )
+          ->with( new Rule\Email() );
+        $v->optional( '_optionalEmail' )
+          ->with( new Rule\Email() );
 
-        $this->assertTrue($v->isValid('optional'));
-        $this->assertTrue($v->isValid('optionalEmail'));
-        $this->assertFalse($v->isValid('_optionalEmail'));
+        $this->assertTrue( $v->isValid( 'optional' ) );
+        $this->assertTrue( $v->isValid( 'optionalEmail' ) );
+        $this->assertFalse( $v->isValid( '_optionalEmail' ) );
     }
 
-    public function testDotNotation()
-    {
-        $v = new Indie([
+    public function testDotNotation() {
+        $v = new Indie( [
             'dot' => [
                 'notation'  => 'required',
                 '_notation' => '',
             ],
-        ]);
+        ] );
 
-        $v->required('dot.notation');
-        $v->required('dot._notation');
+        $v->required( 'dot.notation' );
+        $v->required( 'dot._notation' );
 
-        $this->assertTrue($v->isValid('dot.notation'));
-        $this->assertFalse($v->isValid('dot._notation'));
+        $this->assertTrue( $v->isValid( 'dot.notation' ) );
+        $this->assertFalse( $v->isValid( 'dot._notation' ) );
     }
 
-    public function testArrayValidation()
-    {
-        $v = new Indie([
+    public function testArrayValidation() {
+        $v = new Indie( [
             'dot' => [
                 'notation'  => [
                     10, 11, 12, 13, 14, 15,
                 ],
                 '_notation' => "string",
             ],
-        ]);
+        ] );
 
-        $v->key('dot.notation', true)
-          ->with(new Rule\Required())
-          ->with(new Rule\Numeric());
+        $v->key( 'dot.notation', true )
+          ->with( new Rule\Required() )
+          ->with( new Rule\Numeric() );
 
-        $v->key('dot._notation', true)
-          ->with(new Rule\Required())
-          ->with(new Rule\Numeric());
+        $v->key( 'dot._notation', true )
+          ->with( new Rule\Required() )
+          ->with( new Rule\Numeric() );
 
-        $v->key('dot.notation.0', false)
-          ->with(new Rule\Required())
-          ->with(new Rule\Numeric());
+        $v->key( 'dot.notation.0', false )
+          ->with( new Rule\Required() )
+          ->with( new Rule\Numeric() );
 
-        $this->assertTrue($v->isValid('dot.notation'));
-        $this->assertFalse($v->isValid('dot._notation'));
-        $this->assertTrue($v->isValid('dot.notation.0'));
+        $this->assertTrue( $v->isValid( 'dot.notation' ) );
+        $this->assertFalse( $v->isValid( 'dot._notation' ) );
+        $this->assertTrue( $v->isValid( 'dot.notation.0' ) );
     }
 
-    public function testValueGetter()
-    {
-        $v = new Indie([
+    public function testValueGetter() {
+        $v = new Indie( [
             'dot' => [
                 'notation'  => [
                     10, 11, 12, 13, 14, 15,
                 ],
                 '_notation' => "string",
             ],
-        ]);
+        ] );
 
-        $v->required('dot.notation');
-        $v->required('dot._notation');
+        $v->required( 'dot.notation' );
+        $v->required( 'dot._notation' );
 
-        $this->assertEquals([10, 11, 12, 13, 14, 15], $v->getValue('dot.notation'));
-        $this->assertEquals("string", $v->getValue('dot._notation'));
+        $this->assertEquals( [ 10, 11, 12, 13, 14, 15 ], $v->getValue( 'dot.notation' ) );
+        $this->assertEquals( "string", $v->getValue( 'dot._notation' ) );
     }
 
-    public function testErrorGetter()
-    {
-        $v = new Indie([
+    public function testErrorGetter() {
+        $v = new Indie( [
             "required"  => "required",
             "_required" => "",
-        ]);
+        ] );
 
-        $v->required('required', "ERROR1");
-        $v->required('_required', "ERROR2");
+        $v->required( 'required', "ERROR1" );
+        $v->required( '_required', "ERROR2" );
 
-        $this->assertArrayHasKey("_required", $v->getErrors());
-        $this->assertNotInternalType("array", $v->getErrors('required'));
-        $this->assertContains("ERROR2", $v->getErrors('_required'));
+        $this->assertArrayHasKey( "_required", $v->getErrors() );
+        $this->assertInternalType( "array", $v->getErrors( 'required' ) );
+        $this->assertContains( "ERROR2", $v->getErrors( '_required' ) );
     }
 }

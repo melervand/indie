@@ -63,7 +63,7 @@ class Value
      */
     public function getErrors()
     {
-        return $this->errors;
+        return $this->errors ?: [];
     }
 
     /**
